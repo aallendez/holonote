@@ -1,17 +1,15 @@
+install:
+	cd backend && pip install -r requirements.txt
+	pip install -r requirements.txt
 
+dev:
+	docker compose up -d
+	sleep 2
+	open http://localhost:5173/
 
-backend-dev:
-	uvicorn backend.main:app --reload
+down:
+	docker compose down
 
-backend:
-	uvicorn backend.main:app
-
-frontend-dev:
-	npm run dev
-
-frontend:
-	npm run build
-	npm run start
-
-frontend-build:
-	npm run build
+restart:
+	docker compose down
+	docker compose up -d
