@@ -1,6 +1,12 @@
 install:
+	make install-backend
+	make install-frontend
+
+install-backend:
 	cd backend && pip install -r requirements.txt
-	pip install -r requirements.txt
+
+install-frontend:
+	cd frontend && npm install
 
 dev:
 	docker compose up -d
