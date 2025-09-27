@@ -1,7 +1,7 @@
 from fastapi import FastAPI
+from src.api.router import Router
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
+# Register routes automatically
+Router(app).load_routers()
