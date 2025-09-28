@@ -10,6 +10,7 @@ I provide context to AI with project tree with command `tree -L 3 -I "node_modul
 - Help me create a docker-compose file that includes a react remix frontend, a fastapi backend, and a postgres database.
     Also used AI for some troubleshooting in the process.
 - Github actions for release were not made with AI. I recycled an action I created during summer since it has the same functionality.
+- After an error with a library that env couldn't resolve, I asked cursor to fix it and it changed the `Dockerfile` updating the `RUN` command.
 
 ** Frontend **
 - AI helped me during the firebase setup with troubleshooting since I had errors:
@@ -20,3 +21,4 @@ I provide context to AI with project tree with command `tree -L 3 -I "node_modul
 
 Other chats:
 - Backend implementation of firebase: https://chatgpt.com/share/68d6c9e8-d1f0-8001-9cc4-0cc8c82b8457
+- Frontend API calling implementation: https://chatgpt.com/share/68d821af-66c8-8001-8abc-865431e3658c

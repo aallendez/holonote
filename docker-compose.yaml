@@ -4,7 +4,7 @@ services:
     build:
       context: ./frontend
       target: development-dependencies-env
-    container_name: monorepo-frontend
+    container_name: holonote-frontend
     ports:
       - "5173:5173"
     volumes:
@@ -20,7 +20,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: monorepo-backend
+    container_name: holonote-backend
     ports:
       - "5001:5000"
     volumes:
@@ -29,20 +29,20 @@ services:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=example
-      - DB_NAME=monorepo
+      - DB_NAME=holonote
     depends_on:
       - db
 
   db:
     image: postgres:16
-    container_name: monorepo-db
+    container_name: holonote-db
     restart: always
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: example
-      POSTGRES_DB: monorepo
+      POSTGRES_DB: holonote
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql

@@ -11,8 +11,6 @@ install-frontend:
 
 dev:
 	docker compose up -d
-	sleep 2
-	open http://localhost:5173/
 
 down:
 	docker compose down
@@ -32,3 +30,9 @@ logs-f:
 
 logs-b:
 	docker compose logs -f backend
+
+open-f:
+	open http://localhost:5173/
+
+open-b:
+	open http://localhost:5001/docs#/
