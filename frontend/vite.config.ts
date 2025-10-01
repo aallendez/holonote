@@ -8,4 +8,10 @@ export default defineConfig({
   ssr: {
     noExternal: ["firebase"],
   },
+  test: {
+    environment: "happy-dom",
+    globals: true,
+    setupFiles: [],
+    include: ["app/**/*.test.{ts,tsx}"],
+  },
 });

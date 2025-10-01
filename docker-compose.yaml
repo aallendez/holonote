@@ -25,6 +25,8 @@ services:
       - "5001:5000"
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - DB_HOST=db
       - DB_USER=root

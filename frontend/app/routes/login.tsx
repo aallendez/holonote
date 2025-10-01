@@ -6,6 +6,14 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
+import type { Route } from "./+types/login";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Login" },
+    { name: "description", content: "Login to your account" },
+  ];
+}
 
 const Login: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -20,7 +28,7 @@ const Login: React.FC = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user);
-      navigate("/");
+      navigate("/dashboard");
     } catch (e: any) {
       setErr(e.message);
     }
@@ -32,7 +40,7 @@ const Login: React.FC = () => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       setUser(result.user);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (e: any) {
       setErr(e.message);
     }
@@ -43,7 +51,7 @@ const Login: React.FC = () => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       setUser(result.user);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (e: any) {
       setErr(e.message);
     }
@@ -112,7 +120,7 @@ const Login: React.FC = () => {
           </form>
 
           <Link
-            to="/signup"
+            to="/auth/sign-up"
             className="mt-3 block w-full rounded-lg bg-gray-200 dark:bg-gray-700 px-4 py-2 text-center font-medium hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             Create account
@@ -146,9 +154,6 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500">
-          Tip: Enable dark mode for a better low-light experience.
-        </div>
       </div>
     </div>
   );

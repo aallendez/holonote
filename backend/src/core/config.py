@@ -12,6 +12,7 @@ class Settings:
     FIREBASE_MSG_SENDER_ID = os.getenv("FIREBASE_MSG_SENDER_ID")
     FIREBASE_APP_ID = os.getenv("FIREBASE_APP_ID")
     FIREBASE_MEASUREMENT_ID = os.getenv("FIREBASE_MEASUREMENT_ID")
+    FIREBASE_SERVICE_ACCOUNT_KEY = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY")
     
     # Database settings
     DB_HOST = os.getenv("DB_HOST", "localhost")

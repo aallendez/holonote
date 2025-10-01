@@ -1,10 +1,12 @@
+import { useEffect } from "react";
+import { Navigate } from "react-router";
 import { useAuth } from "../context/authContext";
 
 export default function Index() {
-  const { user } = useAuth();
-  
-  // Extract first name from displayName
-  const firstName = user?.displayName?.split(' ')[0];
-  
-  return <h1>Hello, {firstName}!</h1>;
+  const { user, loading } = useAuth();
+  if (loading) {
+    return null;
+  }
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <Navigate to="/auth/log-in" replace />;
 }

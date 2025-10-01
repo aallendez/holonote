@@ -1,10 +1,11 @@
-
-const BASE_URL = "http://localhost:5001/api/entries";
+const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:5001";
+const BASE_URL = `${API_BASE}/api/entries`;
 
 export interface Entry {
   id: string;
   title: string;
   content: string;
+  score: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -19,7 +19,7 @@ const Signup: React.FC = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user);
-      navigate("/");
+      navigate("/dashboard");
     } catch (e: any) {
       setErr(e.message);
     }
@@ -92,7 +92,7 @@ const Signup: React.FC = () => {
           </form>
 
             <Link
-                to="/login"
+                to="/auth/log-in"
                 className="mt-3 block w-full rounded-lg bg-gray-200 dark:bg-gray-700 px-4 py-2 text-center font-medium hover:bg-gray-300 dark:hover:bg-gray-600"
             >
                 Have an account? Login
@@ -115,9 +115,6 @@ const Signup: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500">
-          Tip: Enable dark mode for a better low-light experience.
-        </div>
       </div>
     </div>
   );

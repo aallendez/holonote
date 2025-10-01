@@ -4,3 +4,6 @@ sqlalchemy
 PyMySQL
 firebase-admin
 psycopg2-binary
+pytest
+pytest-cov
+python-dotenv
