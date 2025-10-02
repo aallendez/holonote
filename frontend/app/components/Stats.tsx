@@ -10,7 +10,7 @@ export function Stats({ totalEntries, currentStreak, bestStreak, avgScore }: Sta
     { label: "Total Entries", value: totalEntries },
     { label: "Current Streak", value: currentStreak },
     { label: "Best Streak", value: bestStreak },
-    { label: "Avg. Score", value: Number.isFinite(avgScore) ? avgScore.toFixed(1) : "-" },
+    { label: "Avg. Score", value: "N/A" },
   ];
 
   return (

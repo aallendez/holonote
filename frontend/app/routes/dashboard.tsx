@@ -2,8 +2,7 @@ import type { Route } from "./+types/dashboard";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/authContext";
 import { useEffect, useMemo, useState } from "react";
-import { getEntries, type Entry, createEntry } from "../api/entries";
-import { getMockEntries } from "../api/entries.mock";
+import { getEntries, type Entry } from "../api/entries";
 import { Toolbar } from "../components/Toolbar";
 import { Stats } from "../components/Stats";
 import { LatestEntries } from "../components/LatestEntries";
@@ -39,31 +38,28 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+    if (loading) return;
+    if (!user) return;
     (async () => {
       setDataLoading(true);
       try {
-        const useMock = new URLSearchParams(window.location.search).get("mock") === "1";
-        const data = useMock ? getMockEntries() : await getEntries();
-        // Normalize backend fields to frontend shape if needed
-        const normalized: Entry[] = (Array.isArray(data) ? data : []).map((d: any) => ({
-          id: d.entry_id || d.id,
-          title: d.title,
-          content: d.content,
+        const data = await getEntries();
+        // Use backend data directly since Entry interface now matches backend
+        const entries: Entry[] = (Array.isArray(data) ? data : []).map((d: any) => ({
+          ...d,
           score: (d.score ?? undefined) == null ? skewedRandomScore() : d.score,
-          createdAt: d.created_at || d.createdAt || d.entry_date,
-          updatedAt: d.updated_at || d.updatedAt || d.entry_date,
         }));
-        setEntries(normalized);
-        setFiltered(normalized);
+        setEntries(entries);
+        setFiltered(entries);
       } catch (e) {
-        const fallback = getMockEntries();
-        setEntries(fallback);
-        setFiltered(fallback);
+        // On failure, show empty state rather than mock data
+        setEntries([]);
+        setFiltered([]);
       } finally {
         setDataLoading(false);
       }
     })();
-  }, []);
+  }, [loading, user]);
 
   function handleSearch(q: string) {
     const query = q.toLowerCase();
@@ -74,26 +70,6 @@ export default function Dashboard() {
     ));
   }
 
-  async function handleCreate() {
-    const now = new Date();
-    const newEntry = await createEntry({
-      user_id: "juan",
-      entry_date: now.toISOString(),
-      title: "New Entry",
-      content: "",
-      score: 1,
-    });
-    const normalized: Entry = {
-      id: newEntry.entry_id || newEntry.id,
-      title: newEntry.title,
-      content: newEntry.content,
-      score: newEntry.score ?? 1,
-      createdAt: newEntry.created_at || newEntry.entry_date,
-      updatedAt: newEntry.updated_at || newEntry.entry_date,
-    };
-    setEntries((prev) => [normalized, ...prev]);
-    setFiltered((prev) => [normalized, ...prev]);
-  }
 
   function filterByRange(list: Entry[], r: typeof range) {
     const now = new Date();
@@ -109,7 +85,7 @@ export default function Dashboard() {
       return list;
     }
     start.setHours(0, 0, 0, 0);
-    return list.filter((e) => new Date(e.createdAt) >= start && new Date(e.createdAt) <= now);
+    return list.filter((e) => new Date(e.created_at) >= start && new Date(e.created_at) <= now);
   }
 
   useEffect(() => {
@@ -121,7 +97,7 @@ export default function Dashboard() {
     const base = filterByRange(entries, range);
     const byDay = new Set<string>();
     for (const e of base) {
-      const d = new Date(e.createdAt);
+      const d = new Date(e.created_at);
       d.setHours(0, 0, 0, 0);
       byDay.add(d.toISOString().slice(0, 10));
     }
@@ -165,7 +141,7 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-4">
-      <Toolbar onCreate={handleCreate} onSearch={handleSearch} />
+      <Toolbar onSearch={handleSearch} />
 
       <div className="flex items-center gap-2">
         {([
@@ -197,7 +173,7 @@ export default function Dashboard() {
             mode={range}
             cellSize={range === "all" || range === "year" ? 12 : 14}
           />
-          <LatestEntries entries={filtered} />
+          <LatestEntries entries={filtered} loading={dataLoading} />
         </div>
         <div className="space-y-4">
           <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 p-6">

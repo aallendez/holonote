@@ -35,7 +35,7 @@ test-b:
 	cd backend && python -m pytest -q
 
 test-cov-b:
-	cd backend && python -mpytest --cov=src --cov-report=term-missing --cov-report=xml
+	cd backend && COVERAGE_FILE=/tmp/holonote.coverage python -m pytest --maxfail=1 --disable-warnings --cov=src --cov-report=term-missing
 
 test-cov:
 	make test-cov-f

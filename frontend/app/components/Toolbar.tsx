@@ -6,7 +6,7 @@ import { useAuth } from "../context/authContext";
 import logo from "../../public/logo.svg";
 
 type ToolbarProps = {
-  onCreate: () => void;
+  onCreate?: () => void; 
   onSearch: (query: string) => void;
 };
 
@@ -71,7 +71,7 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
           <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">⌘K</div>
         </div>
         <button
-          onClick={onCreate}
+          onClick={() => navigate("/new-entry")}
           className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-3 py-2 text-sm font-medium shadow-sm hover:opacity-90 active:opacity-80"
         >
           New Entry

@@ -35,7 +35,6 @@ def test_create_and_get_entries(db_session):
             entry_date=datetime.utcnow(),
             title="First",
             content="Hello",
-            score=5,
         ),
         db_session,
     )
@@ -56,21 +55,19 @@ def test_update_entry(db_session):
             entry_date=datetime.utcnow(),
             title="Old",
             content="Old content",
-            score=1,
         ),
         db_session,
     )
 
     updated = update_entry(
         created.entry_id,
-        EntryUpdate(title="New", content="New content", score=9),
+        EntryUpdate(title="New", content="New content"),
         db_session,
     )
 
     assert updated is not None
     assert updated.title == "New"
     assert updated.content == "New content"
-    assert updated.score == 9
     assert updated.updated_at is not None
 
 
@@ -82,7 +79,6 @@ def test_delete_entry_soft_delete(db_session):
             entry_date=datetime.utcnow(),
             title="To delete",
             content="...",
-            score=3,
         ),
         db_session,
     )
@@ -100,7 +96,7 @@ def test_update_entry_not_found_returns_none(db_session):
     missing_id = str(uuid4())
     result = update_entry(
         missing_id,
-        EntryUpdate(title="X", content="Y", score=0),
+        EntryUpdate(title="X", content="Y"),
         db_session,
     )
     assert result is None

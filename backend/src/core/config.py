@@ -15,6 +15,7 @@ class Settings:
     FIREBASE_SERVICE_ACCOUNT_KEY = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY")
     
     # Database settings
+    DATABASE_URL_ENV = os.getenv("DATABASE_URL")
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "example")
@@ -23,6 +24,13 @@ class Settings:
     
     @property
     def DATABASE_URL(self):
-        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        # 1) If DB_* vars are present (as in docker-compose), build a Postgres URL
+        if self.DB_HOST and self.DB_USER and self.DB_PASSWORD and self.DB_NAME and self.DB_PORT:
+            return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        # 2) Explicit DATABASE_URL next (useful for tests or overrides)
+        if self.DATABASE_URL_ENV:
+            return self.DATABASE_URL_ENV
+        # 3) Safe default for local dev/tests
+        return "sqlite:///./holonote.db"
 
 settings = Settings()

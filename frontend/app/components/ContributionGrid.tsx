@@ -25,7 +25,7 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
     start.setDate(start.getDate() - startDay);
   } else if (mode === "all") {
     // Span from earliest to latest entry
-    const dates = entries.map((e) => new Date(e.createdAt)).sort((a, b) => a.getTime() - b.getTime());
+    const dates = entries.map((e) => new Date(e.created_at)).sort((a, b) => a.getTime() - b.getTime());
     if (dates.length) {
       start = new Date(dates[0]);
       end = new Date(dates[dates.length - 1]);
@@ -50,7 +50,7 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
 
   const counts = new Map<string, number>();
   for (const e of entries) {
-    const d = new Date(e.createdAt);
+    const d = new Date(e.created_at);
     d.setHours(0, 0, 0, 0);
     const key = getDateKey(d);
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -77,8 +77,6 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
   function intensity(count: number) {
     if (count === 0) return "bg-gray-100 dark:bg-gray-800";
     if (count === 1) return "bg-emerald-200 dark:bg-emerald-900";
-    if (count === 2) return "bg-emerald-300 dark:bg-emerald-800";
-    if (count === 3) return "bg-emerald-400 dark:bg-emerald-700";
     return "bg-emerald-500 dark:bg-emerald-600";
   }
 

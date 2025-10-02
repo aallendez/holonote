@@ -10,6 +10,7 @@ def get_entries(user_id: str, db: Session):
     return (
         db.query(EntryTable)
         .filter(EntryTable.user_id == user_id, EntryTable.deleted_at == None)
+        .order_by(EntryTable.created_at.desc())
         .all()
     )
 
@@ -22,7 +23,6 @@ def create_entry(entry: EntryCreate, db: Session):
         entry_date=entry.entry_date,
         title=entry.title,
         content=entry.content,
-        score=entry.score,
     )
     db.add(db_entry)
     db.commit()
@@ -38,7 +38,6 @@ def update_entry(entry_id: str, entry: EntryUpdate, db: Session):
 
     db_entry.title = entry.title
     db_entry.content = entry.content
-    db_entry.score = entry.score
     db_entry.updated_at = datetime.utcnow()
 
     db.commit()

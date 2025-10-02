@@ -17,20 +17,26 @@ export function getMockEntries(count: number = 60): Entry[] {
   exampleDate.setDate(now.getDate() - 1);
   entries.push(
     {
-      id: "3d693d5f-7d55-46d0-92b2-d6d177be1353",
+      entry_id: "3d693d5f-7d55-46d0-92b2-d6d177be1353",
+      user_id: "test-user",
       title: "Test Change",
       content: "I changed this entry",
       score: 8,
-      createdAt: formatIso(new Date(exampleDate.getTime() + 7 * 60 * 1000)),
-      updatedAt: formatIso(new Date(exampleDate.getTime() + 9 * 60 * 1000)),
+      entry_date: formatIso(exampleDate),
+      created_at: formatIso(new Date(exampleDate.getTime() + 7 * 60 * 1000)),
+      updated_at: formatIso(new Date(exampleDate.getTime() + 9 * 60 * 1000)),
+      deleted_at: undefined,
     },
     {
-      id: "ea1aca8a-f3a4-4515-a90c-ab885d45bf12",
+      entry_id: "ea1aca8a-f3a4-4515-a90c-ab885d45bf12",
+      user_id: "test-user",
       title: "Test",
       content: "Thiss is a test",
       score: 10,
-      createdAt: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
-      updatedAt: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
+      entry_date: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
+      created_at: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
+      updated_at: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
+      deleted_at: undefined,
     }
   );
 
@@ -43,12 +49,15 @@ export function getMockEntries(count: number = 60): Entry[] {
     when.setDate(now.getDate() - dayOffset);
     const id = cryptoRandomId();
     entries.push({
-      id,
+      entry_id: id,
+      user_id: "test-user",
       title: `Entry #${i + 1}`,
       content: randomLorem(),
       score: skewedRandomScore(),
-      createdAt: formatIso(when),
-      updatedAt: formatIso(new Date(when.getTime() + randomInt(5, 90) * 60 * 1000)),
+      entry_date: formatIso(when),
+      created_at: formatIso(when),
+      updated_at: formatIso(new Date(when.getTime() + randomInt(5, 90) * 60 * 1000)),
+      deleted_at: undefined,
     });
   }
 

@@ -33,6 +33,8 @@ I provide context to AI with project tree with command `tree -L 3 -I "node_modul
     - Stats (streaks)
     - Github like UI displaying dates with entries where each day is a box
 - Generate mock data so I can visualize the GUI with real data. Entries data will come like this: ""Attached example response from the backend""
+- I used cursor AI to generate the interface of the Warning popup, loading animation.
+- I used cursor AI to help me fix some errors when running frontend tests (Help me fix the error in this frontent test [attached log]).
 
 Other chats: (these specially include architecture and infra decisions)
 - Backend implementation of firebase: https://chatgpt.com/share/68d6c9e8-d1f0-8001-9cc4-0cc8c82b8457
