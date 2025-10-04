@@ -3,7 +3,7 @@ from datetime import datetime, date
 from sqlalchemy import Column, String, DateTime, Integer, UniqueConstraint, ForeignKey, Date
 from uuid import uuid4
 from src.db.session import Base
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON
 from typing import Optional
 
 class HoloTable(Base):
@@ -13,7 +13,7 @@ class HoloTable(Base):
 
     holo_id = Column(String, primary_key=True, index=True, default=lambda: str(uuid4()))
     user_id = Column(String, ForeignKey("users.user_id", ondelete="CASCADE"),nullable=False, index=True)  # FK to users.user_id in DB
-    questions = Column(JSONB, nullable=False)
+    questions = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = Column(DateTime, nullable=True)
@@ -27,7 +27,7 @@ class HoloDailiesTable(Base):
     holo_id = Column(String, ForeignKey("holo.holo_id", ondelete="CASCADE"), nullable=False, index=True)
     entry_date = Column(Date, nullable=False)  # just date, not timestamp
     score = Column(Integer, nullable=False)
-    answers = Column(JSONB, nullable=False)
+    answers = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = Column(DateTime, nullable=True)

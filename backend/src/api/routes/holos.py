@@ -20,6 +20,8 @@ def get_holo_config_route(db: Session = Depends(get_db), user=Depends(get_curren
         if result is None:
             raise HTTPException(status_code=404, detail="Holo configuration not found")
         return result
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Database error while fetching holo config: {str(e)}")
     except Exception as e:
@@ -34,6 +36,8 @@ def update_holo_config_route(holo: HoloUpdate, db: Session = Depends(get_db), us
         if result is None:
             raise HTTPException(status_code=404, detail="Holo configuration not found")
         return result
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except SQLAlchemyError as e:
@@ -64,7 +68,12 @@ def get_holo_daily_route(entry_date: date, db: Session = Depends(get_db), user=D
         holo = get_holo_config(user["uid"], db)
         if not holo:
             raise HTTPException(404, "No holo config found")
-        return get_holo_daily_by_date(holo.holo_id, entry_date, db)
+        result = get_holo_daily_by_date(holo.holo_id, entry_date, db)
+        if not result:
+            raise HTTPException(404, "Holo daily not found")
+        return result
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except IntegrityError as e:
@@ -86,6 +95,8 @@ def get_latest_holo_daily_route(db: Session = Depends(get_db), user=Depends(get_
         if not latest_holo:
             raise HTTPException(404, "No holo daily found")
         return latest_holo
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except IntegrityError as e:
@@ -104,6 +115,10 @@ def create_holo_daily_route(holo_daily: HoloDailyCreate, db: Session = Depends(g
         if not holo:
             raise HTTPException(404, "No holo config found")
         return create_holo_daily(holo.holo_id, holo_daily, db)
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except IntegrityError as e:
@@ -124,6 +139,8 @@ def get_avg_score_route(db: Session = Depends(get_db), user=Depends(get_current_
         
         avg_score = get_avg_score(holo.holo_id, db)
         return {"avg_score": avg_score}
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Database error while fetching average score: {str(e)}")
     except Exception as e:

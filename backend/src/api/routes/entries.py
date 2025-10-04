@@ -55,6 +55,8 @@ def update_entry_route(id: str, entry: EntryUpdate, db: Session = Depends(get_db
         if result is None:
             raise HTTPException(status_code=404, detail="Entry not found")
         return result
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except SQLAlchemyError as e:
@@ -71,6 +73,8 @@ def delete_entry_route(id: str, db: Session = Depends(get_db), user=Depends(get_
         if result is None:
             raise HTTPException(status_code=404, detail="Entry not found")
         return {"message": "Entry deleted successfully"}
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Database error while deleting entry: {str(e)}")
     except Exception as e:
