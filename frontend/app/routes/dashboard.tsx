@@ -3,10 +3,16 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../context/authContext";
 import { useEffect, useMemo, useState } from "react";
 import { getEntries, type Entry } from "../api/entries";
+import { useTodayHolo } from "../hooks/useTodayHolo";
 import { Toolbar } from "../components/Toolbar";
 import { Stats } from "../components/Stats";
 import { LatestEntries } from "../components/LatestEntries";
 import { ContributionGrid } from "../components/ContributionGrid";
+import { HoloPopup } from "../components/HoloPopup";
+import { HoloCTA } from "../components/HoloCTA";
+import { LatestHolo } from "../components/LatestHolo";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { getAvgScore } from "../api/holos";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -30,12 +36,13 @@ export default function Dashboard() {
   const [filtered, setFiltered] = useState<Entry[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [range, setRange] = useState<"week" | "month" | "year" | "all">("month");
-
-  function skewedRandomScore() {
-    // Skew towards higher values near 10
-    const r = Math.random();
-    return Math.max(1, Math.min(10, Math.round(10 - Math.pow(r, 2) * 9)));
-  }
+  const [showHoloPopup, setShowHoloPopup] = useState(false);
+  const [refreshLatestHolo, setRefreshLatestHolo] = useState(false);
+  const [avgScore, setAvgScore] = useState<number | null>(null);
+  
+  // Use the custom hook for today's holo check
+  const { data: todayHolo, refetch: refetchTodayHolo } = useTodayHolo();
+  const hasTodayHolo = !!todayHolo;
 
   useEffect(() => {
     if (loading) return;
@@ -45,10 +52,7 @@ export default function Dashboard() {
       try {
         const data = await getEntries();
         // Use backend data directly since Entry interface now matches backend
-        const entries: Entry[] = (Array.isArray(data) ? data : []).map((d: any) => ({
-          ...d,
-          score: (d.score ?? undefined) == null ? skewedRandomScore() : d.score,
-        }));
+        const entries: Entry[] = Array.isArray(data) ? data : [];
         setEntries(entries);
         setFiltered(entries);
       } catch (e) {
@@ -57,6 +61,21 @@ export default function Dashboard() {
         setFiltered([]);
       } finally {
         setDataLoading(false);
+      }
+    })();
+  }, [loading, user]);
+
+  // Fetch average score
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    (async () => {
+      try {
+        const response = await getAvgScore();
+        setAvgScore(response.avg_score);
+      } catch (e) {
+        console.error("Failed to fetch average score:", e);
+        setAvgScore(null);
       }
     })();
   }, [loading, user]);
@@ -93,7 +112,7 @@ export default function Dashboard() {
     setFiltered(filterByRange(entries, range));
   }, [range, entries]);
 
-  const { totalEntries, currentStreak, bestStreak, avgScore } = useMemo(() => {
+  const { totalEntries, currentStreak, bestStreak } = useMemo(() => {
     const base = filterByRange(entries, range);
     const byDay = new Set<string>();
     for (const e of base) {
@@ -135,9 +154,16 @@ export default function Dashboard() {
     }
     best = Math.max(best, current);
 
-    const avg = base.length ? base.reduce((s, e) => s + (e.score ?? 0), 0) / base.length : 0;
-    return { totalEntries: base.length, currentStreak: streak, bestStreak: best, avgScore: avg };
+    return { totalEntries: base.length, currentStreak: streak, bestStreak: best };
   }, [entries, range]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner label="Loading dashboard..." size={24} />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-4">
@@ -164,7 +190,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <Stats totalEntries={totalEntries} currentStreak={currentStreak} bestStreak={bestStreak} avgScore={avgScore} />
+      <Stats totalEntries={totalEntries} currentStreak={currentStreak} bestStreak={bestStreak} avgScore={avgScore || 0} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
@@ -176,14 +202,22 @@ export default function Dashboard() {
           <LatestEntries entries={filtered} loading={dataLoading} />
         </div>
         <div className="space-y-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 p-6">
-            <div className="text-lg font-semibold">Welcome back 👋</div>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              Capture your thoughts daily and keep your streak alive.
-            </p>
-          </div>
+          <LatestHolo onStartHolo={() => setShowHoloPopup(true)} refreshTrigger={refreshLatestHolo} />
+          <HoloCTA onStartHolo={() => setShowHoloPopup(true)} hasTodayHolo={hasTodayHolo} />
         </div>
       </div>
+
+      <HoloPopup
+        isOpen={showHoloPopup}
+        onClose={() => setShowHoloPopup(false)}
+        onComplete={async () => {
+          // Refresh today's holo status after completion
+          await refetchTodayHolo();
+          // Trigger LatestHolo refresh
+          setRefreshLatestHolo(prev => !prev);
+          console.log('Holo completed successfully!');
+        }}
+      />
     </div>
   );
 }

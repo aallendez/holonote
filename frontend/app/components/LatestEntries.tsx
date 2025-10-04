@@ -17,7 +17,7 @@ export function LatestEntries({ entries, loading = false }: LatestEntriesProps) 
     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60 backdrop-blur p-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold tracking-tight">Latest Entries</h3>
-        <button onClick={() => navigate("/dashboard")} className="text-xs text-gray-600 dark:text-gray-300 group hover:underline mr-2">See all entries <p className="inline-block ml-1 transition-transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1">→</p></button>
+        <button onClick={() => navigate("/dashboard")} className="text-xs cursor-not-allowed text-gray-600 dark:text-gray-300 group hover:underline mr-2">See all entries (coming soon...) <p className="inline-block ml-1 transition-transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1">→</p></button>
       </div>
       <div className="mt-3 overflow-x-auto min-h-[120px] flex items-center justify-center">
         {loading ? (

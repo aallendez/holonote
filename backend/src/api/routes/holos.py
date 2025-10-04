@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from pydantic import ValidationError
 
 from src.models.holos import Holo, HoloCreate, HoloUpdate, HoloDaily, HoloDailyCreate
-from src.db.holos import get_holo_config, update_holo_config, create_holo_config, get_holo_daily_by_date, get_latest_holo_daily, create_holo_daily
+from src.db.holos import get_holo_config, update_holo_config, create_holo_config, get_holo_daily_by_date, get_latest_holo_daily, create_holo_daily, get_avg_score
 from src.db.session import get_db
 from src.api.routes.auth import get_current_user
 
@@ -82,7 +82,10 @@ def get_latest_holo_daily_route(db: Session = Depends(get_db), user=Depends(get_
         holo = get_holo_config(user["uid"], db)
         if not holo:
             raise HTTPException(404, "No holo config found")
-        return get_latest_holo_daily(holo.holo_id, db)
+        latest_holo = get_latest_holo_daily(holo.holo_id, db)
+        if not latest_holo:
+            raise HTTPException(404, "No holo daily found")
+        return latest_holo
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
     except IntegrityError as e:
@@ -109,3 +112,19 @@ def create_holo_daily_route(holo_daily: HoloDailyCreate, db: Session = Depends(g
         raise HTTPException(status_code=500, detail=f"Database error while creating holo daily: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error while creating holo daily: {str(e)}")
+
+
+@router.get("/avg-score")
+def get_avg_score_route(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    """Get the average score from all holo dailies for a user"""
+    try:
+        holo = get_holo_config(user["uid"], db)
+        if not holo:
+            raise HTTPException(404, "No holo config found")
+        
+        avg_score = get_avg_score(holo.holo_id, db)
+        return {"avg_score": avg_score}
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Database error while fetching average score: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error while fetching average score: {str(e)}")

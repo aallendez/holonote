@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createEntry } from "../api/entries";
 import { Toolbar } from "../components/Toolbar";
 import { Popup } from "../components/WarningPopUp";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -58,7 +59,6 @@ export default function NewEntry() {
         entry_date: now.toISOString(),
         title: title.trim(),
         content: content.trim(),
-        score: 1,
       });
       
       // Success - redirect to dashboard
@@ -77,6 +77,14 @@ export default function NewEntry() {
     month: "long",
     day: "numeric",
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner label="Loading..." size={24} />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
@@ -133,7 +141,13 @@ export default function NewEntry() {
               disabled={isSubmitting || !title.trim() || !content.trim()}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-green-600 hover:bg-green-700 text-white px-6 py-2 text-sm font-medium shadow-sm active:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isSubmitting ? "Creating..." : "Create Entry"}
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <LoadingSpinner label="Creating..." size={16} className="text-white" />
+                </div>
+              ) : (
+                "Create Entry"
+              )}
             </button>
             
             <button

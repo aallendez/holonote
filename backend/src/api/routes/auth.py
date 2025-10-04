@@ -9,6 +9,8 @@ def get_current_user(authorization: str = Header(...)):
     token = authorization.split(" ")[1]
     try:
         decoded = verify_token(token)
+        if decoded is None:
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
         return decoded  # contains uid, email, etc.
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token")

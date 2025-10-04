@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_serializer
 from datetime import datetime, date
 from sqlalchemy import Column, String, DateTime, Integer, UniqueConstraint, ForeignKey, Date
 from uuid import uuid4
@@ -45,14 +45,20 @@ class HoloUpdate(BaseModel):
     questions: list[str]
 
 class HoloDaily(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     holo_daily_id: str
     holo_id: str
-    entry_date: date
+    entry_date: date   
     score: int
     answers: dict[str, str | int | bool]
+
+    @field_serializer("entry_date")
+    def serialize_date(self, v: date, _info):
+        return v.isoformat() # automatically convert to string on export
     
 class HoloDailyCreate(BaseModel):
-    entry_date: date
+    entry_date: str  # Accept ISO date string from frontend
     score: int
     answers: dict[str, str | int | bool]
     

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useAuth } from "../context/authContext";
+import { LoadingSpinner } from "./LoadingSpinner";
 import logo from "../../public/logo.svg";
 
 type ToolbarProps = {
@@ -15,7 +16,7 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const photoUrl =
     user?.photoURL ||
     user?.providerData[0]?.photoURL ||
@@ -50,11 +51,15 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
 
   return (
     <div className="relative z-[9999] flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60 backdrop-blur p-4">
-      <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-        <Link to="/">
+      <div className="flex items-center gap-3 text-lg font-semibold tracking-tight">
+        <Link to="/" className="hover:translate-x-1 transition-transform duration-300">
           <img src={logo} alt="Journal" className="w-10 h-10" />
         </Link>
-        <span className="font-bold">{getUserName()}'s</span> Journal
+        {loading ? (
+          <LoadingSpinner label="Loading..." size={16} />
+        ) : (
+          <span><span className="font-bold">{getUserName()}'s</span> Journal</span>
+        )}
       </div>
       <div className="flex w-full sm:w-auto items-center gap-4">
         <div className="relative flex-1 sm:flex-initial">
