@@ -23,6 +23,7 @@ I provide context to AI with project tree with command `tree -L 3 -I "node_modul
 
 **Backend:**
 - Create unit tests for the crud ops in my backend @entries.py . Make it able to execute a test cov with make test-cov-b
+- Error handling in api. Asked this to cursor: Add basic error handling to routes in @entries.py and @holos.py 
 
 **Frontend:**
 - Generate tests for the api in the frontend and include the command to execute them in @makefile as make test-frontend

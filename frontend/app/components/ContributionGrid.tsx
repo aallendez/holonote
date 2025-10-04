@@ -11,6 +11,10 @@ function getDateKey(d: Date) {
   return d.toISOString().slice(0, 10);
 }
 
+function isSameDay(a: Date, b: Date) {
+  return a.getTime() === b.getTime();
+}
+
 export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize = 12 }: ContributionGridProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -133,7 +137,15 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
             <div className="flex gap-1">
               {columns[0]?.map((d, j) => (
                 <div key={j} className="flex flex-col items-center gap-1">
-                  <div title={`${d.count} entries on ${d.date.toDateString()}`} className={`rounded ${intensity(d.count)}`} style={{ width: cellSize, height: cellSize }} />
+                  <div
+                    title={`${d.count} entries on ${d.date.toDateString()}`}
+                    className={`rounded border ${
+                      isSameDay(d.date, today)
+                        ? "border-emerald-500 dark:border-emerald-400"
+                        : "border-transparent"
+                    } ${intensity(d.count)}`}
+                    style={{ width: cellSize, height: cellSize }}
+                  />
                   <div className="text-[10px] text-gray-500 dark:text-gray-400 select-none" style={{ width: cellSize, height: 12 }}>
                     {"SMTWTFS"[d.date.getDay()]}
                   </div>
@@ -152,7 +164,11 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
                     <div
                       key={j}
                       title={`${d.count} entries on ${d.date.toDateString()}`}
-                      className={`rounded ${intensity(d.count)}`}
+                      className={`rounded border ${
+                        isSameDay(d.date, today)
+                          ? "border-emerald-500 dark:border-emerald-400"
+                          : "border-transparent"
+                      } ${intensity(d.count)}`}
                       style={{ width: cellSize, height: cellSize }}
                     />
                   ))}
@@ -175,5 +191,4 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
     </div>
   );
 }
-
 
