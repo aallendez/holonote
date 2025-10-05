@@ -16,9 +16,13 @@ Enter virtual env
 source .venv/bin/activate && cd ..
 ```
 
+Install backend and frontend dependencies
 ```bash
-make install # Install backend and frontend dependencies
-make dev # Build your application
+make install 
+```
+Build your application
+```bash
+make dev 
 ```
 
 2. Access frontend and backend
