@@ -4,6 +4,14 @@ import os
 load_dotenv()
 
 class Settings:
+    _instance = None
+
+    # Singleton pattern
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
     # Firebase settings
     FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
     FIREBASE_AUTH_DOMAIN = os.getenv("FIREBASE_AUTH_DOMAIN")
@@ -31,6 +39,6 @@ class Settings:
         if self.DATABASE_URL_ENV:
             return self.DATABASE_URL_ENV
         # 3) Safe default for local dev/tests
-        return "sqlite:///./holonote.db"
+        raise RuntimeError("DATABASE_URL is not configured. Set DB_* vars or DATABASE_URL.")
 
-settings = Settings()
+settings = Settings() # Creating a global instance
