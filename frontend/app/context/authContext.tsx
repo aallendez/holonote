@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { auth } from "../lib/firebase";
+let authClient: import("firebase/auth").Auth | undefined;
+if (typeof window !== "undefined") {
+  // Lazy import to avoid initializing Firebase during SSR
+  const { auth } = await import("../lib/firebase");
+  authClient = auth;
+}
 
 type AuthContextType = {
   user: User | null;
@@ -14,7 +19,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    if (!authClient) {
+      // SSR or no window - mark as not loading but unauthenticated
+      setLoading(false);
+      return;
+    }
+    const unsub = onAuthStateChanged(authClient, (u) => {
       setUser(u);
       setLoading(false);
     });

@@ -10,7 +10,29 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import React from "react";
 import { AuthProvider } from "./context/authContext";
+
+// Defensive wrapper: avoid crashing if framework context isn't ready yet on first load
+class SafeHead extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    // Intentionally swallow head render errors on first client boot.
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children as React.ReactElement;
+  }
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,8 +53,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
+        <SafeHead>
+          <>
+            <Meta />
+            <Links />
+          </>
+        </SafeHead>
       </head>
       <body>
         {children}
@@ -51,31 +77,14 @@ export default function App() {
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
-
+// Rendered while the client hydrates; avoids route tree hooks running before framework context exists
+export function HydrateFallback() {
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100dvh" }}>
+      <span>Loading…</span>
+    </div>
   );
 }
+
+// Intentionally not exporting a root ErrorBoundary to avoid framework hooks executing
+// before the router context is established on the first client load in dev.
