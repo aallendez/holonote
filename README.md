@@ -6,6 +6,7 @@
 Before you run this app, make sure you have installed npm, python, and docker desktop.
 
 1. Install dependencies
+
 Create virtual env
 ```bash
 cd backend && python -m venv .venv 
