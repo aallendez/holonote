@@ -18,13 +18,11 @@ from src.db.users import create_user
 
 @pytest.fixture()
 def client():
-    """Create a test client with PostgreSQL database"""
-    # Use the same database configuration as the main app
-    from src.core.config import settings
-    
-    # Create engine with PostgreSQL
+    """Create a test client with in-memory SQLite database"""
+    # Use a shared in-memory SQLite so schema persists across connections in tests
     engine = create_engine(
-        settings.DATABASE_URL,
+        "sqlite://",
+        connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -51,8 +49,9 @@ def test_user(client):
     """Create a test user in the database"""
     from src.db.session import get_db
     from src.db.users import user_exists
-    from src.db.holos import get_holo_config
-    db = next(get_db())
+    # Use the overridden get_db from the app to ensure SQLite is used
+    override = app.dependency_overrides[get_db]
+    db = next(override())
     try:
         # Only create user if it doesn't exist
         if not user_exists("test-user", db):
@@ -74,7 +73,8 @@ def clean_holo_config(client):
     from src.db.holos import get_holo_config
     from sqlalchemy import delete
     from src.models.holos import HoloTable
-    db = next(get_db())
+    override = app.dependency_overrides[get_db]
+    db = next(override())
     try:
         # Delete any existing holo config for test-user
         db.execute(delete(HoloTable).where(HoloTable.user_id == "test-user"))

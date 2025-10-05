@@ -51,7 +51,7 @@ def create_entry_route(entry: EntryCreateRequest, db: Session = Depends(get_db),
 def update_entry_route(id: str, entry: EntryUpdate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     """Update an existing entry"""
     try:
-        result = update_entry(id, entry, db)
+        result = update_entry(id, entry, db, user_id=user["uid"])
         if result is None:
             raise HTTPException(status_code=404, detail="Entry not found")
         return result
@@ -69,7 +69,7 @@ def update_entry_route(id: str, entry: EntryUpdate, db: Session = Depends(get_db
 def delete_entry_route(id: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
     """Delete an existing entry"""
     try:
-        result = delete_entry(id, db)
+        result = delete_entry(id, db, user_id=user["uid"])
         if result is None:
             raise HTTPException(status_code=404, detail="Entry not found")
         return {"message": "Entry deleted successfully"}

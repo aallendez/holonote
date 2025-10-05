@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from src.models.users import UserCreate
 from src.models.holos import HoloCreate
-from src.db.users import get_user_by_id, create_user
-from src.db.holos import create_holo_config
+from src.db.users import get_user_by_id, create_user_in_transaction
+from src.db.holos import create_holo_config_in_transaction
 from typing import Optional
 
 # Default holo questions for new users (binary yes/no questions)
@@ -18,6 +18,8 @@ def ensure_user_exists(firebase_user_data: dict, db: Session) -> Optional[dict]:
     """
     Ensures a user exists in the database. If not, creates the user and their holo config.
     Returns user data if successful, None if failed.
+    
+    IMPORTANT: This design is so that in the future users can customize their holo questions. If not, we would just hardcode the questions in the database.
     
     Args:
         firebase_user_data: Dictionary containing Firebase user data (uid, email, name, etc.)
@@ -43,29 +45,30 @@ def ensure_user_exists(firebase_user_data: dict, db: Session) -> Optional[dict]:
         }
     
     try:
-        # Create user
+        # Begin a single transaction that wraps both creations
+        # Rely on SQLAlchemy session transaction management; commit only once
         user_create = UserCreate(
             user_id=user_id,
             user_name=user_name,
             user_email=user_email
         )
-        new_user = create_user(user_create, db)
-        
-        # Create holo config for the new user
+        new_user = create_user_in_transaction(user_create, db)
+
         holo_create = HoloCreate(
             user_id=user_id,
             questions=DEFAULT_HOLO_QUESTIONS
         )
-        new_holo = create_holo_config(user_id, holo_create, db)
-        
+        _ = create_holo_config_in_transaction(user_id, holo_create, db) # _ is used to avoid the return value since we don't need it
+
+        db.commit()
+
         return {
             'user_id': new_user.user_id,
             'user_name': new_user.user_name,
             'user_email': new_user.user_email
         }
-        
+
     except Exception as e:
-        # If anything fails, rollback the transaction
         db.rollback()
         print(f"Error creating user and holo: {str(e)}")
         return None

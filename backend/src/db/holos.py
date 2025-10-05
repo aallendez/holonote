@@ -38,6 +38,17 @@ def create_holo_config(user_id: str, holo: HoloCreate, db: Session):
     db.refresh(db_holo)
     return db_holo
 
+def create_holo_config_in_transaction(user_id: str, holo: HoloCreate, db: Session):
+    """Create holo config without committing; intended for use within an external transaction."""
+    db_holo = HoloTable(
+        user_id=user_id,
+        questions=holo.questions,
+    )
+    db.add(db_holo)
+    db.flush()
+    db.refresh(db_holo)
+    return db_holo
+
 # Holo daily
 def get_holo_daily_by_date(holo_id: str, entry_date: date, db: Session):
     """Get the holo daily for a user"""
@@ -81,7 +92,8 @@ def create_holo_daily(holo_id: str, holo_daily: HoloDailyCreate, db: Session):
     except ValueError as e:
         raise ValueError(f"Invalid date format: {holo_daily.entry_date}. Expected YYYY-MM-DD format.")
     except Exception as e:
-        raise Exception(f"Error creating holo daily: {str(e)}")
+        # Preserve original exception type and traceback
+        raise
 
 def get_avg_score(holo_id: str, db: Session):
     """Get the average score from all holo dailies for a user"""

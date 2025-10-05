@@ -5,6 +5,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 # Import the modules
 from src.db.holos import (
@@ -22,32 +23,16 @@ from src.db.session import Base
 
 @pytest.fixture()
 def db_session():
-    """Create a database session for testing using PostgreSQL"""
-    # Use the same database configuration as the main app
-    from src.core.config import settings
-    
-    # Create engine with PostgreSQL
-    engine = create_engine(settings.DATABASE_URL)
+    """Create a database session for testing using in-memory SQLite"""
+    # Shared in-memory SQLite so schema persists across connections
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-    # Create a minimal users table for foreign key constraints
-    from sqlalchemy import Column, String, DateTime, text
-    
-    # Create users table first (required for foreign key constraints)
-    with engine.connect() as conn:
-        conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS users (
-                user_id VARCHAR PRIMARY KEY,
-                user_name VARCHAR NOT NULL,
-                user_email VARCHAR NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                deleted_at TIMESTAMP NULL
-            )
-        """))
-        conn.commit()
-    
-    # Create schema for other tables
+    # Create schema for tables
     Base.metadata.create_all(bind=engine)
 
     session = TestingSessionLocal()
@@ -67,18 +52,9 @@ def sample_user_id():
 @pytest.fixture()
 def test_user(db_session, sample_user_id):
     """Create a test user in the users table"""
-    from sqlalchemy import text
-    
-    # Insert a test user
-    db_session.execute(text("""
-        INSERT INTO users (user_id, user_name, user_email)
-        VALUES (:user_id, :user_name, :user_email)
-    """), {
-        "user_id": sample_user_id,
-        "user_name": "Test User",
-        "user_email": "test@example.com"
-    })
-    db_session.commit()
+    from src.db.users import create_user
+    from src.models.users import UserCreate
+    create_user(UserCreate(user_id=sample_user_id, user_name="Test User", user_email="test@example.com"), db_session)
     
     return sample_user_id
 

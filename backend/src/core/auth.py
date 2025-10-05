@@ -5,6 +5,9 @@ from sqlalchemy.orm import Session
 from src.db.session import SessionLocal
 from src.services.user_service import ensure_user_exists
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Initialize Firebase Admin SDK
 try:
@@ -23,6 +26,7 @@ def verify_token(id_token: str):
         decoded_token = auth.verify_id_token(id_token)
         return decoded_token
     except Exception as e:
+        logger.warning("verify_token failed: %s: %s", e.__class__.__name__, str(e))
         return None
 
 def verify_token_and_ensure_user(id_token: str):
@@ -30,6 +34,7 @@ def verify_token_and_ensure_user(id_token: str):
     try:
         decoded_token = auth.verify_id_token(id_token)
         if not decoded_token:
+            logger.warning("verify_token_and_ensure_user: token verification returned no claims")
             return None
         
         # Ensure user exists in our database
@@ -45,4 +50,5 @@ def verify_token_and_ensure_user(id_token: str):
             db.close()
             
     except Exception as e:
+        logger.warning("verify_token_and_ensure_user failed: %s: %s", e.__class__.__name__, str(e))
         return None

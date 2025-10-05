@@ -1,11 +1,42 @@
 import pytest
 from sqlalchemy.orm import Session
-from src.db.session import SessionLocal
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+from src.db.session import SessionLocal, Base
 from src.services.user_service import ensure_user_exists, DEFAULT_HOLO_QUESTIONS
 from src.db.users import get_user_by_id, user_exists
 from src.db.holos import get_holo_config
 from src.models.users import UserTable
 from unittest.mock import patch, MagicMock
+
+@pytest.fixture(autouse=True)
+def _use_in_memory_sqlite(monkeypatch):
+    """Force tests to use a shared in-memory SQLite database.
+
+    This overrides src.db.session.SessionLocal so any import that calls
+    SessionLocal() will get an SQLite-backed session rather than Postgres.
+    """
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    # Ensure all models are imported so tables are registered on Base.metadata
+    from src.models import users as _users_models  # noqa: F401
+    from src.models import holos as _holos_models  # noqa: F401
+    from src.models import entries as _entries_models  # noqa: F401
+
+    # Create schema
+    Base.metadata.create_all(bind=engine)
+
+    # Override the module attribute used by app code
+    monkeypatch.setattr("src.db.session.SessionLocal", TestingSessionLocal)
+    # Also rebind the locally imported name in this test module
+    globals()["SessionLocal"] = TestingSessionLocal
+    yield
 
 def test_user_creation_with_holo():
     """Test that user creation automatically creates a holo config"""

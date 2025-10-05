@@ -22,6 +22,19 @@ def create_user(user: UserCreate, db: Session):
     db.refresh(db_user)
     return db_user
 
+def create_user_in_transaction(user: UserCreate, db: Session):
+    """Create a new user without committing; intended for use within an external transaction."""
+    db_user = UserTable(
+        user_id=user.user_id,
+        user_name=user.user_name,
+        user_email=user.user_email
+    )
+    db.add(db_user)
+    # Flush to persist to DB without committing so FKs/defaults are available
+    db.flush()
+    db.refresh(db_user)
+    return db_user
+
 def update_user(user_id: str, user: UserUpdate, db: Session):
     """Update an existing user"""
     db_user = db.query(UserTable).filter(UserTable.user_id == user_id).first()

@@ -38,7 +38,7 @@ I provide context to AI with project tree with command `tree -L 3 -I "node_modul
 - I used cursor AI to generate the interface of the Warning popup, loading animation.
 - I used cursor AI to help me fix some errors when running frontend tests (Help me fix the error in this frontent test [attached log]).
 
-In a final review of code implementation, I asked AI to sweep the codebase, check for code smells and provide me with a report and action items.
+In a final review of code implementation, I asked AI to sweep the codebase, check for code smells and provide me with a report and action items. Propmt: Read the codebase and look for code smells (specially in backend), make a small report and action items.
 
 Other chats: (these specially include architecture and infra decisions)
 - Backend implementation of firebase: https://chatgpt.com/share/68d6c9e8-d1f0-8001-9cc4-0cc8c82b8457

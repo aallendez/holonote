@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from src.models.entries import EntryTable, EntryCreate, EntryUpdate, EntryDelete
 
@@ -30,9 +31,12 @@ def create_entry(entry: EntryCreate, db: Session):
     return db_entry
 
 
-def update_entry(entry_id: str, entry: EntryUpdate, db: Session):
+def update_entry(entry_id: str, entry: EntryUpdate, db: Session, user_id: Optional[str] = None):
     """Update an existing entry"""
-    db_entry = db.query(EntryTable).filter(EntryTable.entry_id == entry_id).first()
+    query = db.query(EntryTable).filter(EntryTable.entry_id == entry_id, EntryTable.deleted_at == None)
+    if user_id is not None:
+        query = query.filter(EntryTable.user_id == user_id)
+    db_entry = query.first()
     if not db_entry:
         return None
 
@@ -45,9 +49,12 @@ def update_entry(entry_id: str, entry: EntryUpdate, db: Session):
     return db_entry
 
 
-def delete_entry(entry_id: str, db: Session):
+def delete_entry(entry_id: str, db: Session, user_id: Optional[str] = None):
     """Delete an existing entry"""
-    db_entry = db.query(EntryTable).filter(EntryTable.entry_id == entry_id).first()
+    query = db.query(EntryTable).filter(EntryTable.entry_id == entry_id, EntryTable.deleted_at == None)
+    if user_id is not None:
+        query = query.filter(EntryTable.user_id == user_id)
+    db_entry = query.first()
     if not db_entry:
         return None
 
