@@ -6,12 +6,15 @@
 Before you run this app, make sure you have installed npm, python, and docker desktop.
 
 1. Install dependencies
+Create virtual env
 ```bash
-cd backend
-python -m venv .venv # Create a virtual environment
-source .venv/bin/activate # Enter the virtual environment
-cd ..
+cd backend && python -m venv .venv 
 ```
+Enter virtual env
+```bash
+source .venv/bin/activate && cd ..
+```
+
 ```bash
 make install # Install backend and frontend dependencies
 make dev # Build your application
