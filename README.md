@@ -26,25 +26,43 @@ make dev
 ```
 
 2. Access frontend and backend
+Open frontend
 ```bash
-make open-f # Open frontend on browser
-make open-b # Open backend on browser
-````
+make open-f
+```
+Open backend
+```bash
+make open-b 
+```
 
 3. Logs (if needed). Need to be in separate terminals.
 ```bash
-make logs-f # Frontend logs
-make logs-b # Backend logs
+make logs-f
+```
+```bash
+make logs-b
 ```
 
 To stop or restart this app, run:
+Stope the app
 ```bash
-make down # stop the app
-make restart # restart the app
+make down
+```
+Restart the app
+```bash
+make restart
 ```
 
 To run test coverage on both backend and frontend, run:
 ```bash
 make test-cov
+```
+Backend
+```bash
+make test-cov-b
+```
+Frontend
+```bash
+make test-cov-f
 ```
 
