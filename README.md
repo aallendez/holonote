@@ -1,11 +1,11 @@
 # Holonote
 
 
-### Local Development
+## Local Development
 
 Before you run this app, make sure you have installed npm, python, and docker desktop.
 
-1. Install dependencies
+### 1. Install dependencies
 
 Create virtual env
 ```bash
@@ -25,7 +25,7 @@ Build your application
 make dev 
 ```
 
-2. Access frontend and backend
+### 2. Access frontend and backend
 Open frontend
 ```bash
 make open-f
@@ -35,7 +35,7 @@ Open backend
 make open-b 
 ```
 
-3. Logs (if needed). Need to be in separate terminals.
+### 3. Logs (if needed). Need to be in separate terminals.
 ```bash
 make logs-f
 ```
@@ -43,6 +43,7 @@ make logs-f
 make logs-b
 ```
 
+### Stop & Restart
 To stop or restart this app, run:
 Stope the app
 ```bash
@@ -53,6 +54,7 @@ Restart the app
 make restart
 ```
 
+### Test Coverage
 To run test coverage on both backend and frontend, run:
 ```bash
 make test-cov
