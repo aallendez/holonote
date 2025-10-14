@@ -38,7 +38,7 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
   async function handleLogout() {
     try {
       await signOut(auth);
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       console.error("Failed to sign out", err);
     }

@@ -28,7 +28,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      navigate("/auth/log-in", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [user, loading, navigate]);
 
