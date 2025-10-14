@@ -67,6 +67,24 @@ export async function createHoloConfig(questions: string[]): Promise<HoloConfig>
   return response.json();
 }
 
+// Update holo config for current user
+export async function updateHoloConfig(questions: string[]): Promise<HoloConfig> {
+  const response = await fetchWithAuth(`${API_BASE_URL}/holos/holo`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ questions }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to update holo config: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  return response.json();
+}
+
 // Get holo daily by date
 export async function getHoloDaily(entryDate: string): Promise<HoloDaily | null> {
   const response = await fetchWithAuth(`${API_BASE_URL}/holos/daily?entry_date=${entryDate}`);

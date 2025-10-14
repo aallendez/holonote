@@ -83,3 +83,7 @@ coverage/
 **/build/
 **/coverage/
 **/.cache/
+
+.puml
+codebase.md
+diagrams/

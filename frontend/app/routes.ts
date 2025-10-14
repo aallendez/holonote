@@ -7,4 +7,5 @@ export default [
   route("/dashboard", "routes/dashboard.tsx"), // maps to "/dashboard"
   route("/new-entry", "routes/new-entry.tsx"), // maps to "/new-entry"
   route("/entries", "routes/entries.tsx"), // maps to "/entries"
+  route("/settings", "routes/settings.tsx"), // maps to "/settings"
 ] satisfies RouteConfig;

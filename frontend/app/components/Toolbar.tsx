@@ -104,12 +104,11 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
               <button
                 onClick={() => {
                   setMenuOpen(false);
-                  // Placeholder: no settings page yet
-                  // Optionally navigate when implemented
+                  navigate("/settings");
                 }}
                 className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                Settings (coming soon)
+                Settings
               </button>
               <div className="my-1 border-t border-gray-200 dark:border-gray-800" />
               <button

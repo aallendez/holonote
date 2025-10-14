@@ -12,6 +12,7 @@ import "./app.css";
 
 import React from "react";
 import { AuthProvider } from "./context/authContext";
+import { Footer } from "./components/Footer";
 
 // Defensive wrapper: avoid crashing if framework context isn't ready yet on first load
 class SafeHead extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
@@ -64,6 +65,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Footer />
       </body>
     </html>
   );

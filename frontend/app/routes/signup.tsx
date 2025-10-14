@@ -31,7 +31,7 @@ const Signup: React.FC = () => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       setUser(result.user);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (e: any) {
       setErr(e.message);
     }
