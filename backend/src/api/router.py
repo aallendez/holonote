@@ -3,6 +3,7 @@ import pkgutil
 from fastapi import FastAPI
 from . import routes
 
+
 class Router:
     def __init__(self, app: FastAPI):
         self.app = app

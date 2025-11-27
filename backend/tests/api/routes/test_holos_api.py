@@ -38,6 +38,7 @@ def client():
     app.dependency_overrides[get_db] = override_get_db
     # Bypass auth dependency for tests
     from src.api.routes.auth import get_current_user
+
     app.dependency_overrides[get_current_user] = lambda: {"uid": "test-user"}
     with TestClient(app) as c:
         yield c
@@ -49,6 +50,7 @@ def test_user(client):
     """Create a test user in the database"""
     from src.db.session import get_db
     from src.db.users import user_exists
+
     # Use the overridden get_db from the app to ensure SQLite is used
     override = app.dependency_overrides[get_db]
     db = next(override())
@@ -58,7 +60,7 @@ def test_user(client):
             user_create = UserCreate(
                 user_id="test-user",
                 user_name="Test User",
-                user_email="test@example.com"
+                user_email="test@example.com",
             )
             create_user(user_create, db)
         yield
@@ -73,6 +75,7 @@ def clean_holo_config(client):
     from src.db.holos import get_holo_config
     from sqlalchemy import delete
     from src.models.holos import HoloTable
+
     override = app.dependency_overrides[get_db]
     db = next(override())
     try:
@@ -88,7 +91,11 @@ def clean_holo_config(client):
 def sample_holo_config():
     return {
         "user_id": "test-user",
-        "questions": ["How are you feeling today?", "What did you learn?", "Rate your mood"]
+        "questions": [
+            "How are you feeling today?",
+            "What did you learn?",
+            "Rate your mood",
+        ],
     }
 
 
@@ -97,7 +104,7 @@ def sample_holo_daily():
     return {
         "entry_date": "2024-01-15",
         "score": 8,
-        "answers": {"question1": "Great", "question2": "Python", "question3": 8}
+        "answers": {"question1": "Great", "question2": "Python", "question3": 8},
     }
 
 
@@ -106,12 +113,12 @@ class TestHoloConfigAPI:
     def setup_test_data(self, client, test_user, clean_holo_config):
         """Automatically set up test data for all tests in this class"""
         pass
-    
+
     def test_create_holo_config(self, client, sample_holo_config):
         """Test creating a new holo configuration via API"""
         response = client.post("/holos/holo", json=sample_holo_config)
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["holo_id"] is not None
         assert data["user_id"] == "test-user"
@@ -128,11 +135,11 @@ class TestHoloConfigAPI:
         # Create first
         create_response = client.post("/holos/holo", json=sample_holo_config)
         assert create_response.status_code == 200
-        
+
         # Then get
         get_response = client.get("/holos/holo")
         assert get_response.status_code == 200
-        
+
         data = get_response.json()
         assert data["user_id"] == "test-user"
         assert data["questions"] == sample_holo_config["questions"]
@@ -149,13 +156,13 @@ class TestHoloConfigAPI:
         # Create first
         create_response = client.post("/holos/holo", json=sample_holo_config)
         assert create_response.status_code == 200
-        
+
         # Update
         new_questions = ["Updated question 1", "Updated question 2"]
         update_data = {"questions": new_questions}
         update_response = client.put("/holos/holo", json=update_data)
         assert update_response.status_code == 200
-        
+
         data = update_response.json()
         assert data["questions"] == new_questions
 
@@ -169,7 +176,7 @@ class TestHoloConfigAPI:
         """Test updating holo config with invalid data"""
         # Create first
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Try to update with invalid data
         invalid_data = {"questions": "not a list"}
         response = client.put("/holos/holo", json=invalid_data)
@@ -181,7 +188,7 @@ class TestHoloDailyAPI:
     def setup_test_data(self, client, test_user, clean_holo_config):
         """Automatically set up test data for all tests in this class"""
         pass
-    
+
     def test_get_holo_daily_no_config(self, client):
         """Test getting holo daily when no holo config exists"""
         response = client.get("/holos/daily?entry_date=2024-01-15")
@@ -192,7 +199,7 @@ class TestHoloDailyAPI:
         """Test getting holo daily when config exists but no daily for date"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Try to get daily for date that doesn't exist
         response = client.get("/holos/daily?entry_date=2024-01-15")
         assert response.status_code == 404
@@ -204,32 +211,36 @@ class TestHoloDailyAPI:
         assert response.status_code == 404
         assert "No holo config found" in response.json()["detail"]
 
-    def test_create_holo_daily_success(self, client, sample_holo_config, sample_holo_daily):
+    def test_create_holo_daily_success(
+        self, client, sample_holo_config, sample_holo_daily
+    ):
         """Test creating holo daily successfully"""
         # Create holo config first
         config_response = client.post("/holos/holo", json=sample_holo_config)
         assert config_response.status_code == 200
-        
+
         # Create holo daily
         daily_response = client.post("/holos/daily", json=sample_holo_daily)
         assert daily_response.status_code == 200
-        
+
         data = daily_response.json()
         assert data["holo_daily_id"] is not None
         assert data["entry_date"] == "2024-01-15"
         assert data["score"] == 8
         assert data["answers"] == sample_holo_daily["answers"]
 
-    def test_get_holo_daily_by_date_success(self, client, sample_holo_config, sample_holo_daily):
+    def test_get_holo_daily_by_date_success(
+        self, client, sample_holo_config, sample_holo_daily
+    ):
         """Test getting holo daily by specific date"""
         # Create holo config and daily
         config_response = client.post("/holos/holo", json=sample_holo_config)
         daily_response = client.post("/holos/daily", json=sample_holo_daily)
-        
+
         # Get by date
         get_response = client.get("/holos/daily?entry_date=2024-01-15")
         assert get_response.status_code == 200
-        
+
         data = get_response.json()
         assert data["entry_date"] == "2024-01-15"
         assert data["score"] == 8
@@ -244,7 +255,7 @@ class TestHoloDailyAPI:
         """Test getting latest holo daily when no dailies exist"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Try to get latest daily
         response = client.get("/holos/daily/latest")
         assert response.status_code == 404
@@ -254,26 +265,26 @@ class TestHoloDailyAPI:
         """Test getting latest holo daily successfully"""
         # Create holo config
         config_response = client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Create multiple dailies
         daily1 = {
             "entry_date": "2024-01-10",
             "score": 5,
-            "answers": {"test": "answer1"}
+            "answers": {"test": "answer1"},
         }
         daily2 = {
             "entry_date": "2024-01-15",
             "score": 8,
-            "answers": {"test": "answer2"}
+            "answers": {"test": "answer2"},
         }
-        
+
         client.post("/holos/daily", json=daily1)
         client.post("/holos/daily", json=daily2)
-        
+
         # Get latest (should be 2024-01-15)
         response = client.get("/holos/daily/latest")
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["entry_date"] == "2024-01-15"
         assert data["score"] == 8
@@ -282,12 +293,12 @@ class TestHoloDailyAPI:
         """Test creating holo daily with invalid data"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Try to create daily with invalid data
         invalid_daily = {
             "entry_date": "invalid-date",
             "score": "not a number",
-            "answers": "not a dict"
+            "answers": "not a dict",
         }
         response = client.post("/holos/daily", json=invalid_daily)
         assert response.status_code == 422
@@ -296,12 +307,12 @@ class TestHoloDailyAPI:
         """Test creating holo daily with invalid date format"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Try to create daily with invalid date format
         invalid_daily = {
             "entry_date": "invalid-date",
             "score": 5,
-            "answers": {"test": "answer"}
+            "answers": {"test": "answer"},
         }
         response = client.post("/holos/daily", json=invalid_daily)
         assert response.status_code == 422
@@ -312,7 +323,7 @@ class TestHoloAvgScoreAPI:
     def setup_test_data(self, client, test_user, clean_holo_config):
         """Automatically set up test data for all tests in this class"""
         pass
-    
+
     def test_get_avg_score_no_config(self, client):
         """Test getting average score when no holo config exists"""
         response = client.get("/holos/avg-score")
@@ -323,11 +334,11 @@ class TestHoloAvgScoreAPI:
         """Test getting average score when no dailies exist"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Get average score
         response = client.get("/holos/avg-score")
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["avg_score"] is None
 
@@ -336,36 +347,38 @@ class TestHoloAvgScoreAPI:
         # Create holo config
         config_response = client.post("/holos/holo", json=sample_holo_config)
         assert config_response.status_code == 200
-        
+
         # Create multiple dailies with different scores
         dailies = [
             {"entry_date": "2024-01-10", "score": 5, "answers": {"test": "answer1"}},
             {"entry_date": "2024-01-11", "score": 7, "answers": {"test": "answer2"}},
-            {"entry_date": "2024-01-12", "score": 9, "answers": {"test": "answer3"}}
+            {"entry_date": "2024-01-12", "score": 9, "answers": {"test": "answer3"}},
         ]
-        
+
         for daily in dailies:
             client.post("/holos/daily", json=daily)
-        
+
         # Get average score (should be 7.0)
         response = client.get("/holos/avg-score")
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["avg_score"] == 7.0
 
-    def test_get_avg_score_single_entry(self, client, sample_holo_config, sample_holo_daily):
+    def test_get_avg_score_single_entry(
+        self, client, sample_holo_config, sample_holo_daily
+    ):
         """Test getting average score with single entry"""
         # Create holo config
         client.post("/holos/holo", json=sample_holo_config)
-        
+
         # Create single daily
         client.post("/holos/daily", json=sample_holo_daily)
-        
+
         # Get average score
         response = client.get("/holos/avg-score")
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["avg_score"] == 8.0  # Same as single entry score
 
@@ -375,47 +388,49 @@ class TestHoloCRUDFlow:
     def setup_test_data(self, client, test_user, clean_holo_config):
         """Automatically set up test data for all tests in this class"""
         pass
-    
+
     def test_complete_holo_workflow(self, client, sample_holo_config):
         """Test complete CRUD workflow for holos"""
         # 1. Create holo config
         config_response = client.post("/holos/holo", json=sample_holo_config)
         assert config_response.status_code == 200
         config_data = config_response.json()
-        
+
         # 2. Get holo config
         get_response = client.get("/holos/holo")
         assert get_response.status_code == 200
         assert get_response.json()["questions"] == sample_holo_config["questions"]
-        
+
         # 3. Update holo config
         new_questions = ["Updated question 1", "Updated question 2"]
         update_response = client.put("/holos/holo", json={"questions": new_questions})
         assert update_response.status_code == 200
         assert update_response.json()["questions"] == new_questions
-        
+
         # 4. Create multiple holo dailies
         dailies = [
             {"entry_date": "2024-01-10", "score": 5, "answers": {"q1": "answer1"}},
             {"entry_date": "2024-01-11", "score": 8, "answers": {"q1": "answer2"}},
-            {"entry_date": "2024-01-12", "score": 7, "answers": {"q1": "answer3"}}
+            {"entry_date": "2024-01-12", "score": 7, "answers": {"q1": "answer3"}},
         ]
-        
+
         for daily in dailies:
             daily_response = client.post("/holos/daily", json=daily)
             assert daily_response.status_code == 200
-        
+
         # 5. Get daily by date
         specific_response = client.get("/holos/daily?entry_date=2024-01-11")
         assert specific_response.status_code == 200
         assert specific_response.json()["score"] == 8
-        
+
         # 6. Get latest daily
         latest_response = client.get("/holos/daily/latest")
         assert latest_response.status_code == 200
         assert latest_response.json()["entry_date"] == "2024-01-12"
-        
+
         # 7. Get average score
         avg_response = client.get("/holos/avg-score")
         assert avg_response.status_code == 200
-        assert avg_response.json()["avg_score"] == 6.67  # (5+8+7)/3 rounded to 2 decimals
+        assert (
+            avg_response.json()["avg_score"] == 6.67
+        )  # (5+8+7)/3 rounded to 2 decimals

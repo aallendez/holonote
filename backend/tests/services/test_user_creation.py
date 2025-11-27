@@ -10,6 +10,7 @@ from src.db.holos import get_holo_config
 from src.models.users import UserTable
 from unittest.mock import patch, MagicMock
 
+
 @pytest.fixture(autouse=True)
 def _use_in_memory_sqlite(monkeypatch):
     """Force tests to use a shared in-memory SQLite database.
@@ -38,51 +39,53 @@ def _use_in_memory_sqlite(monkeypatch):
     globals()["SessionLocal"] = TestingSessionLocal
     yield
 
+
 def test_user_creation_with_holo():
     """Test that user creation automatically creates a holo config"""
     db = SessionLocal()
     try:
         # Mock Firebase user data
         firebase_user_data = {
-            'uid': 'test-user-123',
-            'email': 'test@example.com',
-            'name': 'Test User'
+            "uid": "test-user-123",
+            "email": "test@example.com",
+            "name": "Test User",
         }
-        
+
         # Ensure user doesn't exist initially
-        assert not user_exists('test-user-123', db)
-        
+        assert not user_exists("test-user-123", db)
+
         # Create user with holo
         result = ensure_user_exists(firebase_user_data, db)
-        
+
         # Verify user was created
         assert result is not None
-        assert result['user_id'] == 'test-user-123'
-        assert result['user_email'] == 'test@example.com'
-        assert result['user_name'] == 'Test User'
-        
+        assert result["user_id"] == "test-user-123"
+        assert result["user_email"] == "test@example.com"
+        assert result["user_name"] == "Test User"
+
         # Verify user exists in database
-        user = get_user_by_id('test-user-123', db)
+        user = get_user_by_id("test-user-123", db)
         assert user is not None
-        assert user.user_id == 'test-user-123'
-        assert user.user_email == 'test@example.com'
-        assert user.user_name == 'Test User'
-        
+        assert user.user_id == "test-user-123"
+        assert user.user_email == "test@example.com"
+        assert user.user_name == "Test User"
+
         # Verify holo was created
-        holo = get_holo_config('test-user-123', db)
+        holo = get_holo_config("test-user-123", db)
         assert holo is not None
-        assert holo.user_id == 'test-user-123'
+        assert holo.user_id == "test-user-123"
         assert holo.questions is not None
         assert len(holo.questions) == 5  # Default questions
-        
+
         print("✅ User creation with holo initialization test passed!")
-        
+
     finally:
         # Clean up test data
-        if user_exists('test-user-123', db):
-            db.query(type(user)).filter(type(user).user_id == 'test-user-123').delete()
+        if user_exists("test-user-123", db):
+            db.query(type(user)).filter(type(user).user_id == "test-user-123").delete()
             db.commit()
         db.close()
+
 
 def test_existing_user_handling():
     """Test that existing users are handled correctly"""
@@ -90,49 +93,54 @@ def test_existing_user_handling():
     try:
         # Mock Firebase user data
         firebase_user_data = {
-            'uid': 'existing-user-456',
-            'email': 'existing@example.com',
-            'name': 'Existing User'
+            "uid": "existing-user-456",
+            "email": "existing@example.com",
+            "name": "Existing User",
         }
-        
+
         # Create user first time
         result1 = ensure_user_exists(firebase_user_data, db)
         assert result1 is not None
-        
+
         # Try to create same user again
         result2 = ensure_user_exists(firebase_user_data, db)
         assert result2 is not None
-        assert result1['user_id'] == result2['user_id']
-        
+        assert result1["user_id"] == result2["user_id"]
+
         print("✅ Existing user handling test passed!")
-        
+
     finally:
         # Clean up test data
-        if user_exists('existing-user-456', db):
-            db.query(UserTable).filter(UserTable.user_id == 'existing-user-456').delete()
+        if user_exists("existing-user-456", db):
+            db.query(UserTable).filter(
+                UserTable.user_id == "existing-user-456"
+            ).delete()
             db.commit()
         db.close()
+
 
 def test_ensure_user_exists_no_uid():
     """Test ensure_user_exists with no uid in firebase data"""
     db = SessionLocal()
     try:
         firebase_user_data = {
-            'email': 'test@example.com',
-            'name': 'Test User'
+            "email": "test@example.com",
+            "name": "Test User",
             # Missing 'uid'
         }
-        
+
         result = ensure_user_exists(firebase_user_data, db)
         assert result is None
-        
+
     finally:
         db.close()
+
 
 # def test_ensure_user_exists_exception_handling():
 #     """Test ensure_user_exists when exception occurs during user creation"""
 #     # This test is commented out due to database state issues
 #     pass
+
 
 def test_default_holo_questions():
     """Test that DEFAULT_HOLO_QUESTIONS contains expected questions"""
@@ -141,10 +149,11 @@ def test_default_holo_questions():
         "Have you worked out?",
         "Have you eaten healthy?",
         "Have you done a hobby?",
-        "Have you gone to uni?"
+        "Have you gone to uni?",
     ]
-    
+
     assert DEFAULT_HOLO_QUESTIONS == expected_questions
+
 
 if __name__ == "__main__":
     test_user_creation_with_holo()

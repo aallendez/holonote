@@ -1,4 +1,4 @@
-.PHONY: install install-backend install-frontend dev down restart backend frontend test-frontend test-b test-cov-b
+.PHONY: install install-backend install-frontend dev down restart backend frontend test-frontend test-b test-cov-b format-check format
 install:
 	make install-backend
 	make install-frontend
@@ -46,3 +46,35 @@ open-f:
 
 open-b:
 	open http://localhost:5001/docs#/
+
+format-check:
+	@if [ -d "backend" ]; then \
+		cd backend && \
+		if [ -f ".venv/bin/python" ]; then \
+			.venv/bin/python -m black --check src tests; \
+		else \
+			python -m black --check src tests; \
+		fi; \
+	else \
+		if [ -f ".venv/bin/python" ]; then \
+			.venv/bin/python -m black --check src tests; \
+		else \
+			python -m black --check src tests; \
+		fi; \
+	fi
+
+format:
+	@if [ -d "backend" ]; then \
+		cd backend && \
+		if [ -f ".venv/bin/python" ]; then \
+			.venv/bin/python -m black src tests; \
+		else \
+			python -m black src tests; \
+		fi; \
+	else \
+		if [ -f ".venv/bin/python" ]; then \
+			.venv/bin/python -m black src tests; \
+		else \
+			python -m black src tests; \
+		fi; \
+	fi

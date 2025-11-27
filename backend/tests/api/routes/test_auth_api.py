@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from main import app
 from src.db.session import Base, get_db
 
+
 @pytest.fixture()
 def client():
     # Create a fresh in-memory SQLite DB and override get_db
@@ -30,19 +31,26 @@ def client():
         yield c
     app.dependency_overrides.clear()
 
+
 class TestAuthAPI:
     def test_protected_route_success(self, client):
         """Test accessing protected route with valid token"""
-        with patch('src.api.routes.auth.verify_token_and_ensure_user') as mock_verify:
+        with patch("src.api.routes.auth.verify_token_and_ensure_user") as mock_verify:
             mock_verify.return_value = {"uid": "test-user", "email": "test@example.com"}
-            
-            response = client.get("/auth/protected", headers={"Authorization": "Bearer valid-token"})
+
+            response = client.get(
+                "/auth/protected", headers={"Authorization": "Bearer valid-token"}
+            )
             assert response.status_code == 200
-            assert "Hello test-user, you are authenticated!" in response.json()["message"]
+            assert (
+                "Hello test-user, you are authenticated!" in response.json()["message"]
+            )
 
     def test_protected_route_invalid_header(self, client):
         """Test accessing protected route with invalid authorization header"""
-        response = client.get("/auth/protected", headers={"Authorization": "Invalid token"})
+        response = client.get(
+            "/auth/protected", headers={"Authorization": "Invalid token"}
+        )
         assert response.status_code == 401
         assert "Invalid authorization header" in response.json()["detail"]
 
@@ -53,32 +61,38 @@ class TestAuthAPI:
 
     def test_protected_route_invalid_token(self, client):
         """Test accessing protected route with invalid token"""
-        with patch('src.api.routes.auth.verify_token_and_ensure_user') as mock_verify:
+        with patch("src.api.routes.auth.verify_token_and_ensure_user") as mock_verify:
             mock_verify.return_value = None
-            
-            response = client.get("/auth/protected", headers={"Authorization": "Bearer invalid-token"})
+
+            response = client.get(
+                "/auth/protected", headers={"Authorization": "Bearer invalid-token"}
+            )
             assert response.status_code == 401
             assert "Invalid or expired token" in response.json()["detail"]
 
     def test_protected_route_exception(self, client):
         """Test accessing protected route when token verification raises exception"""
-        with patch('src.api.routes.auth.verify_token_and_ensure_user') as mock_verify:
+        with patch("src.api.routes.auth.verify_token_and_ensure_user") as mock_verify:
             mock_verify.side_effect = Exception("Token verification failed")
-            
-            response = client.get("/auth/protected", headers={"Authorization": "Bearer token"})
+
+            response = client.get(
+                "/auth/protected", headers={"Authorization": "Bearer token"}
+            )
             assert response.status_code == 401
             assert "Invalid or expired token" in response.json()["detail"]
 
     def test_get_user_info_success(self, client):
         """Test getting user info with valid token"""
-        with patch('src.api.routes.auth.verify_token_and_ensure_user') as mock_verify:
+        with patch("src.api.routes.auth.verify_token_and_ensure_user") as mock_verify:
             mock_verify.return_value = {
-                "uid": "test-user", 
+                "uid": "test-user",
                 "email": "test@example.com",
-                "user_data": {"user_id": "test-user", "user_name": "Test User"}
+                "user_data": {"user_id": "test-user", "user_name": "Test User"},
             }
-            
-            response = client.get("/auth/user-info", headers={"Authorization": "Bearer valid-token"})
+
+            response = client.get(
+                "/auth/user-info", headers={"Authorization": "Bearer valid-token"}
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["firebase_uid"] == "test-user"
@@ -86,10 +100,12 @@ class TestAuthAPI:
 
     def test_get_user_info_no_user_data(self, client):
         """Test getting user info when no user_data is present"""
-        with patch('src.api.routes.auth.verify_token_and_ensure_user') as mock_verify:
+        with patch("src.api.routes.auth.verify_token_and_ensure_user") as mock_verify:
             mock_verify.return_value = {"uid": "test-user", "email": "test@example.com"}
-            
-            response = client.get("/auth/user-info", headers={"Authorization": "Bearer valid-token"})
+
+            response = client.get(
+                "/auth/user-info", headers={"Authorization": "Bearer valid-token"}
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["firebase_uid"] == "test-user"

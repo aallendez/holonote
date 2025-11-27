@@ -3,6 +3,7 @@ import os
 
 load_dotenv()
 
+
 class Settings:
     _instance = None
 
@@ -40,8 +41,13 @@ class Settings:
     def DATABASE_URL(self):
         if self.DATABASE_URL_ENV:
             return self.DATABASE_URL_ENV
-        if all([self.DB_HOST, self.DB_USER, self.DB_PASSWORD, self.DB_NAME, self.DB_PORT]):
+        if all(
+            [self.DB_HOST, self.DB_USER, self.DB_PASSWORD, self.DB_NAME, self.DB_PORT]
+        ):
             return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        raise RuntimeError("DATABASE_URL is not configured. Set DB_* vars or DATABASE_URL.")
+        raise RuntimeError(
+            "DATABASE_URL is not configured. Set DB_* vars or DATABASE_URL."
+        )
 
-settings = Settings() # Creating a global instance
+
+settings = Settings()  # Creating a global instance

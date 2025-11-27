@@ -4,6 +4,7 @@ from sqlalchemy import Column, String, DateTime
 from src.db.session import Base
 from typing import Optional
 
+
 class UserTable(Base):
     __tablename__ = "users"
 
@@ -14,6 +15,7 @@ class UserTable(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = Column(DateTime, nullable=True)
 
+
 class User(BaseModel):
     user_id: str
     user_name: str
@@ -22,10 +24,12 @@ class User(BaseModel):
     updated_at: datetime
     deleted_at: Optional[datetime] = None
 
+
 class UserCreate(BaseModel):
     user_id: str
     user_name: str
     user_email: str
+
 
 class UserUpdate(BaseModel):
     user_name: Optional[str] = None

@@ -16,9 +16,13 @@ except ValueError:
     # Parse the service account key from environment variable
     service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
     cred = credentials.Certificate(service_account_info)
-    firebase_admin.initialize_app(cred, {
-        "projectId": settings.FIREBASE_PROJECT_ID,
-    })
+    firebase_admin.initialize_app(
+        cred,
+        {
+            "projectId": settings.FIREBASE_PROJECT_ID,
+        },
+    )
+
 
 def verify_token(id_token: str):
     """Verify Firebase ID token from frontend"""
@@ -29,26 +33,31 @@ def verify_token(id_token: str):
         logger.warning("verify_token failed: %s: %s", e.__class__.__name__, str(e))
         return None
 
+
 def verify_token_and_ensure_user(id_token: str):
     """Verify Firebase ID token and ensure user exists in database"""
     try:
         decoded_token = auth.verify_id_token(id_token)
         if not decoded_token:
-            logger.warning("verify_token_and_ensure_user: token verification returned no claims")
+            logger.warning(
+                "verify_token_and_ensure_user: token verification returned no claims"
+            )
             return None
-        
+
         # Ensure user exists in our database
         db = SessionLocal()
         try:
             user_data = ensure_user_exists(decoded_token, db)
             if user_data:
                 # Add user data to the token for use in routes
-                decoded_token['user_data'] = user_data
+                decoded_token["user_data"] = user_data
                 return decoded_token
             return None
         finally:
             db.close()
-            
+
     except Exception as e:
-        logger.warning("verify_token_and_ensure_user failed: %s: %s", e.__class__.__name__, str(e))
+        logger.warning(
+            "verify_token_and_ensure_user failed: %s: %s", e.__class__.__name__, str(e)
+        )
         return None

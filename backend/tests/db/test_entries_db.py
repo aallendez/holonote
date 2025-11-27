@@ -13,7 +13,9 @@ from src.db.session import Base
 @pytest.fixture()
 def db_session():
     # Use in-memory SQLite for fast, isolated tests
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+    engine = create_engine(
+        "sqlite:///:memory:", connect_args={"check_same_thread": False}
+    )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     # Create schema
@@ -106,5 +108,3 @@ def test_delete_entry_not_found_returns_none(db_session):
     missing_id = str(uuid4())
     result = delete_entry(missing_id, db_session)
     assert result is None
-
-

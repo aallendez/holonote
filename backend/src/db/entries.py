@@ -5,7 +5,7 @@ from typing import Optional
 
 from src.models.entries import EntryTable, EntryCreate, EntryUpdate, EntryDelete
 
-    
+
 def get_entries(user_id: str, db: Session):
     """Get all entries for a user"""
     return (
@@ -31,9 +31,13 @@ def create_entry(entry: EntryCreate, db: Session):
     return db_entry
 
 
-def update_entry(entry_id: str, entry: EntryUpdate, db: Session, user_id: Optional[str] = None):
+def update_entry(
+    entry_id: str, entry: EntryUpdate, db: Session, user_id: Optional[str] = None
+):
     """Update an existing entry"""
-    query = db.query(EntryTable).filter(EntryTable.entry_id == entry_id, EntryTable.deleted_at == None)
+    query = db.query(EntryTable).filter(
+        EntryTable.entry_id == entry_id, EntryTable.deleted_at == None
+    )
     if user_id is not None:
         query = query.filter(EntryTable.user_id == user_id)
     db_entry = query.first()
@@ -51,7 +55,9 @@ def update_entry(entry_id: str, entry: EntryUpdate, db: Session, user_id: Option
 
 def delete_entry(entry_id: str, db: Session, user_id: Optional[str] = None):
     """Delete an existing entry"""
-    query = db.query(EntryTable).filter(EntryTable.entry_id == entry_id, EntryTable.deleted_at == None)
+    query = db.query(EntryTable).filter(
+        EntryTable.entry_id == entry_id, EntryTable.deleted_at == None
+    )
     if user_id is not None:
         query = query.filter(EntryTable.user_id == user_id)
     db_entry = query.first()

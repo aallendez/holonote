@@ -33,12 +33,21 @@ jobs:
         id: semrel
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version   
+        run: semantic-release version
 
       # Extract version from .semver file (created by python-semantic-release)
+      # If .semver doesn't exist, get the latest git tag
       - name: Read version
         id: get_version
-        run: echo "version=$(cat .semver)" >> $GITHUB_OUTPUT
+        run: |
+          if [ -f .semver ]; then
+            VERSION=$(cat .semver)
+          else
+            # Get the latest version tag (remove 'v' prefix if present)
+            VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "0.1.0")
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: $VERSION"
 
       # ---- Build & Push Docker images ----
       - name: Login to GHCR

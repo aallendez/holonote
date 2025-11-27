@@ -3,14 +3,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.db.session import Base
 from src.db.users import (
-    get_user_by_id, 
-    get_user_by_email, 
-    create_user, 
-    update_user, 
-    delete_user, 
-    user_exists
+    get_user_by_id,
+    get_user_by_email,
+    create_user,
+    update_user,
+    delete_user,
+    user_exists,
 )
 from src.models.users import UserCreate, UserUpdate, UserTable
+
 
 @pytest.fixture()
 def db_session():
@@ -18,20 +19,22 @@ def db_session():
     engine = create_engine("sqlite:///:memory:")
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(bind=engine)
-    
+
     db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
 
+
 @pytest.fixture()
 def sample_user_data():
     return {
         "user_id": "test-user-123",
         "user_name": "Test User",
-        "user_email": "test@example.com"
+        "user_email": "test@example.com",
     }
+
 
 class TestUsersDB:
     def test_get_user_by_id_existing(self, db_session, sample_user_data):
@@ -39,10 +42,10 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         created_user = create_user(user_create, db_session)
-        
+
         # Get user by ID
         result = get_user_by_id(sample_user_data["user_id"], db_session)
-        
+
         assert result is not None
         assert result.user_id == sample_user_data["user_id"]
         assert result.user_name == sample_user_data["user_name"]
@@ -58,10 +61,10 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         create_user(user_create, db_session)
-        
+
         # Get user by email
         result = get_user_by_email(sample_user_data["user_email"], db_session)
-        
+
         assert result is not None
         assert result.user_id == sample_user_data["user_id"]
         assert result.user_email == sample_user_data["user_email"]
@@ -75,7 +78,7 @@ class TestUsersDB:
         """Test creating a new user successfully"""
         user_create = UserCreate(**sample_user_data)
         result = create_user(user_create, db_session)
-        
+
         assert result is not None
         assert result.user_id == sample_user_data["user_id"]
         assert result.user_name == sample_user_data["user_name"]
@@ -87,11 +90,13 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         create_user(user_create, db_session)
-        
+
         # Update user
-        update_data = UserUpdate(user_name="Updated Name", user_email="updated@example.com")
+        update_data = UserUpdate(
+            user_name="Updated Name", user_email="updated@example.com"
+        )
         result = update_user(sample_user_data["user_id"], update_data, db_session)
-        
+
         assert result is not None
         assert result.user_name == "Updated Name"
         assert result.user_email == "updated@example.com"
@@ -101,14 +106,16 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         create_user(user_create, db_session)
-        
+
         # Update only name
         update_data = UserUpdate(user_name="Updated Name")
         result = update_user(sample_user_data["user_id"], update_data, db_session)
-        
+
         assert result is not None
         assert result.user_name == "Updated Name"
-        assert result.user_email == sample_user_data["user_email"]  # Should remain unchanged
+        assert (
+            result.user_email == sample_user_data["user_email"]
+        )  # Should remain unchanged
 
     def test_update_user_not_found(self, db_session):
         """Test updating a user that doesn't exist"""
@@ -121,10 +128,10 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         create_user(user_create, db_session)
-        
+
         # Delete user
         result = delete_user(sample_user_data["user_id"], db_session)
-        
+
         assert result is not None
         assert result.deleted_at is not None
         assert result.user_id == sample_user_data["user_id"]
@@ -139,7 +146,7 @@ class TestUsersDB:
         # Create a user first
         user_create = UserCreate(**sample_user_data)
         create_user(user_create, db_session)
-        
+
         # Check if user exists
         result = user_exists(sample_user_data["user_id"], db_session)
         assert result is True

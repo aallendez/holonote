@@ -35,6 +35,7 @@ def client():
     app.dependency_overrides[get_db] = override_get_db
     # Bypass auth dependency for tests
     from src.api.routes.auth import get_current_user
+
     app.dependency_overrides[get_current_user] = lambda: {"uid": "test-user"}
     with TestClient(app) as c:
         yield c
@@ -84,9 +85,9 @@ def test_entries_crud_flow(client: TestClient):
 
 def test_get_entries_database_error(client):
     """Test get entries with database error"""
-    with patch('src.api.routes.entries.get_entries') as mock_get_entries:
+    with patch("src.api.routes.entries.get_entries") as mock_get_entries:
         mock_get_entries.side_effect = SQLAlchemyError("Database connection failed")
-        
+
         response = client.get("/entries/")
         assert response.status_code == 500
         assert "Database error while fetching entries" in response.json()["detail"]
@@ -94,9 +95,9 @@ def test_get_entries_database_error(client):
 
 def test_get_entries_unexpected_error(client):
     """Test get entries with unexpected error"""
-    with patch('src.api.routes.entries.get_entries') as mock_get_entries:
+    with patch("src.api.routes.entries.get_entries") as mock_get_entries:
         mock_get_entries.side_effect = Exception("Unexpected error")
-        
+
         response = client.get("/entries/")
         assert response.status_code == 500
         assert "Unexpected error while fetching entries" in response.json()["detail"]
@@ -104,13 +105,15 @@ def test_get_entries_unexpected_error(client):
 
 def test_create_entry_validation_error(client):
     """Test create entry with validation error"""
-    with patch('src.api.routes.entries.EntryCreate') as mock_entry_create:
-        mock_entry_create.side_effect = ValidationError.from_exception_data("ValidationError", [])
-        
+    with patch("src.api.routes.entries.EntryCreate") as mock_entry_create:
+        mock_entry_create.side_effect = ValidationError.from_exception_data(
+            "ValidationError", []
+        )
+
         payload = {
             "entry_date": "invalid-date",
             "title": "Test Entry",
-            "content": "Test Content"
+            "content": "Test Content",
         }
         response = client.post("/entries/", json=payload)
         assert response.status_code == 422
@@ -118,13 +121,13 @@ def test_create_entry_validation_error(client):
 
 def test_create_entry_integrity_error(client):
     """Test create entry with integrity error"""
-    with patch('src.api.routes.entries.create_entry') as mock_create_entry:
+    with patch("src.api.routes.entries.create_entry") as mock_create_entry:
         mock_create_entry.side_effect = IntegrityError("Integrity error", None, None)
-        
+
         payload = {
             "entry_date": datetime.utcnow().isoformat(),
             "title": "Test Entry",
-            "content": "Test Content"
+            "content": "Test Content",
         }
         response = client.post("/entries/", json=payload)
         assert response.status_code == 400
@@ -133,13 +136,13 @@ def test_create_entry_integrity_error(client):
 
 def test_create_entry_database_error(client):
     """Test create entry with database error"""
-    with patch('src.api.routes.entries.create_entry') as mock_create_entry:
+    with patch("src.api.routes.entries.create_entry") as mock_create_entry:
         mock_create_entry.side_effect = SQLAlchemyError("Database error")
-        
+
         payload = {
             "entry_date": datetime.utcnow().isoformat(),
             "title": "Test Entry",
-            "content": "Test Content"
+            "content": "Test Content",
         }
         response = client.post("/entries/", json=payload)
         assert response.status_code == 500
@@ -148,13 +151,13 @@ def test_create_entry_database_error(client):
 
 def test_create_entry_unexpected_error(client):
     """Test create entry with unexpected error"""
-    with patch('src.api.routes.entries.create_entry') as mock_create_entry:
+    with patch("src.api.routes.entries.create_entry") as mock_create_entry:
         mock_create_entry.side_effect = Exception("Unexpected error")
-        
+
         payload = {
             "entry_date": datetime.utcnow().isoformat(),
             "title": "Test Entry",
-            "content": "Test Content"
+            "content": "Test Content",
         }
         response = client.post("/entries/", json=payload)
         assert response.status_code == 500
@@ -163,10 +166,7 @@ def test_create_entry_unexpected_error(client):
 
 def test_update_entry_not_found(client):
     """Test update entry that doesn't exist"""
-    update_payload = {
-        "title": "Updated Title",
-        "content": "Updated Content"
-    }
+    update_payload = {"title": "Updated Title", "content": "Updated Content"}
     response = client.put("/entries/non-existent-id", json=update_payload)
     assert response.status_code == 404
     assert "Entry not found" in response.json()["detail"]
@@ -174,26 +174,22 @@ def test_update_entry_not_found(client):
 
 def test_update_entry_validation_error(client):
     """Test update entry with validation error"""
-    with patch('src.api.routes.entries.update_entry') as mock_update_entry:
-        mock_update_entry.side_effect = ValidationError.from_exception_data("ValidationError", [])
-        
-        update_payload = {
-            "title": "Updated Title",
-            "content": "Updated Content"
-        }
+    with patch("src.api.routes.entries.update_entry") as mock_update_entry:
+        mock_update_entry.side_effect = ValidationError.from_exception_data(
+            "ValidationError", []
+        )
+
+        update_payload = {"title": "Updated Title", "content": "Updated Content"}
         response = client.put("/entries/test-id", json=update_payload)
         assert response.status_code == 422
 
 
 def test_update_entry_database_error(client):
     """Test update entry with database error"""
-    with patch('src.api.routes.entries.update_entry') as mock_update_entry:
+    with patch("src.api.routes.entries.update_entry") as mock_update_entry:
         mock_update_entry.side_effect = SQLAlchemyError("Database error")
-        
-        update_payload = {
-            "title": "Updated Title",
-            "content": "Updated Content"
-        }
+
+        update_payload = {"title": "Updated Title", "content": "Updated Content"}
         response = client.put("/entries/test-id", json=update_payload)
         assert response.status_code == 500
         assert "Database error while updating entry" in response.json()["detail"]
@@ -201,13 +197,10 @@ def test_update_entry_database_error(client):
 
 def test_update_entry_unexpected_error(client):
     """Test update entry with unexpected error"""
-    with patch('src.api.routes.entries.update_entry') as mock_update_entry:
+    with patch("src.api.routes.entries.update_entry") as mock_update_entry:
         mock_update_entry.side_effect = Exception("Unexpected error")
-        
-        update_payload = {
-            "title": "Updated Title",
-            "content": "Updated Content"
-        }
+
+        update_payload = {"title": "Updated Title", "content": "Updated Content"}
         response = client.put("/entries/test-id", json=update_payload)
         assert response.status_code == 500
         assert "Unexpected error while updating entry" in response.json()["detail"]
@@ -222,9 +215,9 @@ def test_delete_entry_not_found(client):
 
 def test_delete_entry_database_error(client):
     """Test delete entry with database error"""
-    with patch('src.api.routes.entries.delete_entry') as mock_delete_entry:
+    with patch("src.api.routes.entries.delete_entry") as mock_delete_entry:
         mock_delete_entry.side_effect = SQLAlchemyError("Database error")
-        
+
         response = client.delete("/entries/test-id")
         assert response.status_code == 500
         assert "Database error while deleting entry" in response.json()["detail"]
@@ -232,9 +225,9 @@ def test_delete_entry_database_error(client):
 
 def test_delete_entry_unexpected_error(client):
     """Test delete entry with unexpected error"""
-    with patch('src.api.routes.entries.delete_entry') as mock_delete_entry:
+    with patch("src.api.routes.entries.delete_entry") as mock_delete_entry:
         mock_delete_entry.side_effect = Exception("Unexpected error")
-        
+
         response = client.delete("/entries/test-id")
         assert response.status_code == 500
         assert "Unexpected error while deleting entry" in response.json()["detail"]
