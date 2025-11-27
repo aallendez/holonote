@@ -5,6 +5,10 @@
 
 Before you run this app, make sure you have installed npm, python, and docker desktop.
 
+### 0. Requirements
+
+- Python Version equal or higher to 3.11 
+
 ### 1. Install dependencies
 
 Create virtual env

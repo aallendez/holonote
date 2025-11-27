@@ -10,7 +10,7 @@ install-frontend:
 	cd frontend && npm install && cd ..
 
 dev:
-	docker compose up -d
+	docker compose up
 
 down:
 	docker compose down
