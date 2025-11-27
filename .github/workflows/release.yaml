@@ -35,8 +35,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version
 
-      # Extract version from .semver file (created by python-semantic-release)
-      # If .semver doesn't exist, get the latest git tag
       - name: Read version
         id: get_version
         run: |
