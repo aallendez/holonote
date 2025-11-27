@@ -15,7 +15,10 @@ import { AuthProvider } from "./context/authContext";
 import { Footer } from "./components/Footer";
 
 // Defensive wrapper: avoid crashing if framework context isn't ready yet on first load
-class SafeHead extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+class SafeHead extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
@@ -82,7 +85,14 @@ export default function App() {
 // Rendered while the client hydrates; avoids route tree hooks running before framework context exists
 export function HydrateFallback() {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100dvh" }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100dvh",
+      }}
+    >
       <span>Loading…</span>
     </div>
   );

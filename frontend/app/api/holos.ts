@@ -1,6 +1,7 @@
 import { fetchWithAuth } from "./auth";
 
-const RAW_API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:5001";
+const RAW_API_BASE =
+  (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:5001";
 const API_BASE_URL = RAW_API_BASE.replace(/\/$/, "");
 
 export interface HoloConfig {
@@ -29,33 +30,37 @@ export interface AvgScoreResponse {
 
 // Get holo config for current user
 export async function getHoloConfig(): Promise<HoloConfig> {
-  console.log('🌐 getHoloConfig: Starting...');
-  console.log('🌐 getHoloConfig: URL:', `${API_BASE_URL}/holos/holo`);
-  
+  console.log("🌐 getHoloConfig: Starting...");
+  console.log("🌐 getHoloConfig: URL:", `${API_BASE_URL}/holos/holo`);
+
   const response = await fetchWithAuth(`${API_BASE_URL}/holos/holo`);
-  console.log('🌐 getHoloConfig: Response status:', response.status);
+  console.log("🌐 getHoloConfig: Response status:", response.status);
 
   if (!response.ok) {
     if (response.status === 404) {
-      console.log('🌐 getHoloConfig: 404 - No config found');
-      throw new Error('No holo configuration found');
+      console.log("🌐 getHoloConfig: 404 - No config found");
+      throw new Error("No holo configuration found");
     }
     const errorText = await response.text();
-    console.error('🌐 getHoloConfig: Error response:', errorText);
-    throw new Error(`Failed to fetch holo config: ${response.status} ${response.statusText} - ${errorText}`);
+    console.error("🌐 getHoloConfig: Error response:", errorText);
+    throw new Error(
+      `Failed to fetch holo config: ${response.status} ${response.statusText} - ${errorText}`,
+    );
   }
 
   const result = await response.json();
-  console.log('🌐 getHoloConfig: Success:', result);
+  console.log("🌐 getHoloConfig: Success:", result);
   return result;
 }
 
 // Create holo config for current user
-export async function createHoloConfig(questions: string[]): Promise<HoloConfig> {
+export async function createHoloConfig(
+  questions: string[],
+): Promise<HoloConfig> {
   const response = await fetchWithAuth(`${API_BASE_URL}/holos/holo`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ questions }),
   });
@@ -68,26 +73,34 @@ export async function createHoloConfig(questions: string[]): Promise<HoloConfig>
 }
 
 // Update holo config for current user
-export async function updateHoloConfig(questions: string[]): Promise<HoloConfig> {
+export async function updateHoloConfig(
+  questions: string[],
+): Promise<HoloConfig> {
   const response = await fetchWithAuth(`${API_BASE_URL}/holos/holo`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ questions }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to update holo config: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error(
+      `Failed to update holo config: ${response.status} ${response.statusText} - ${errorText}`,
+    );
   }
 
   return response.json();
 }
 
 // Get holo daily by date
-export async function getHoloDaily(entryDate: string): Promise<HoloDaily | null> {
-  const response = await fetchWithAuth(`${API_BASE_URL}/holos/daily?entry_date=${entryDate}`);
+export async function getHoloDaily(
+  entryDate: string,
+): Promise<HoloDaily | null> {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/holos/daily?entry_date=${entryDate}`,
+  );
 
   if (response.status === 404) {
     return null;
@@ -109,25 +122,31 @@ export async function getLatestHoloDaily(): Promise<HoloDaily | null> {
   }
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch latest holo daily: ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch latest holo daily: ${response.statusText}`,
+    );
   }
 
   return response.json();
 }
 
 // Create holo daily
-export async function createHoloDaily(holoDaily: HoloDailyCreate): Promise<HoloDaily> {
+export async function createHoloDaily(
+  holoDaily: HoloDailyCreate,
+): Promise<HoloDaily> {
   const response = await fetchWithAuth(`${API_BASE_URL}/holos/daily`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(holoDaily),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to create holo daily: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error(
+      `Failed to create holo daily: ${response.status} ${response.statusText} - ${errorText}`,
+    );
   }
 
   return response.json();
@@ -139,7 +158,9 @@ export async function getAvgScore(): Promise<AvgScoreResponse> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to fetch average score: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error(
+      `Failed to fetch average score: ${response.status} ${response.statusText} - ${errorText}`,
+    );
   }
 
   return response.json();

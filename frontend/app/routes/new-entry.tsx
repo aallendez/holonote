@@ -2,6 +2,7 @@ import type { Route } from "./+types/new-entry";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/authContext";
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { createEntry } from "../api/entries";
 import { Toolbar } from "../components/Toolbar";
 import { Popup } from "../components/WarningPopUp";
@@ -42,9 +43,9 @@ export default function NewEntry() {
     navigate("/dashboard");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!title.trim() || !content.trim()) {
       setError("Both title and content are required");
       return;
@@ -60,7 +61,7 @@ export default function NewEntry() {
         title: title.trim(),
         content: content.trim(),
       });
-      
+
       // Success - redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
@@ -89,7 +90,7 @@ export default function NewEntry() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
       <Toolbar onCreate={() => {}} onSearch={() => {}} />
-      
+
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">New Entry</h1>
@@ -100,7 +101,10 @@ export default function NewEntry() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Title
             </label>
             <input
@@ -115,7 +119,10 @@ export default function NewEntry() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="content"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Content
             </label>
             <textarea
@@ -143,13 +150,17 @@ export default function NewEntry() {
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <LoadingSpinner label="Creating..." size={16} className="text-white" />
+                  <LoadingSpinner
+                    label="Creating..."
+                    size={16}
+                    className="text-white"
+                  />
                 </div>
               ) : (
                 "Create Entry"
               )}
             </button>
-            
+
             <button
               type="button"
               onClick={handleCancel}

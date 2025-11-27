@@ -5,12 +5,20 @@ type StatsProps = {
   avgScore: number;
 };
 
-export function Stats({ totalEntries, currentStreak, bestStreak, avgScore }: StatsProps) {
+export function Stats({
+  totalEntries,
+  currentStreak,
+  bestStreak,
+  avgScore,
+}: StatsProps) {
   const items = [
     { label: "Total Entries", value: totalEntries },
     { label: "Current Streak", value: currentStreak },
     { label: "Best Streak", value: bestStreak },
-    { label: "Avg. Score", value: avgScore !== null ? avgScore.toFixed(1) : "N/A" },
+    {
+      label: "Avg. Score",
+      value: avgScore !== null ? avgScore.toFixed(1) : "N/A",
+    },
   ];
 
   return (
@@ -29,5 +37,3 @@ export function Stats({ totalEntries, currentStreak, bestStreak, avgScore }: Sta
     </div>
   );
 }
-
-

@@ -70,21 +70,21 @@ repos:
     hooks:
       - id: frontend-prettier
         name: Frontend Prettier
-        entry: npx prettier --check .
+        entry: bash -c "cd frontend && npx prettier --write ."
         language: system
         types_or: [javascript, css, json, yaml]
         files: ^frontend/
 
       - id: frontend-eslint
         name: Frontend ESLint
-        entry: npx eslint .
+        entry: bash -c "cd frontend && npx eslint ."
         language: system
         types_or: [javascript]
         files: ^frontend/
 
       - id: frontend-typecheck
         name: TypeScript Type Check
-        entry: npx tsc --noEmit
+        entry: bash -c "cd frontend && npx tsc --noEmit"
         language: system
         files: ^frontend/
 

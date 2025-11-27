@@ -15,7 +15,12 @@ function isSameDay(a: Date, b: Date) {
   return a.getTime() === b.getTime();
 }
 
-export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize = 12 }: ContributionGridProps) {
+export function ContributionGrid({
+  entries,
+  mode = "year",
+  weeks = 30,
+  cellSize = 12,
+}: ContributionGridProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -29,7 +34,9 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
     start.setDate(start.getDate() - startDay);
   } else if (mode === "all") {
     // Span from earliest to latest entry
-    const dates = entries.map((e) => new Date(e.created_at)).sort((a, b) => a.getTime() - b.getTime());
+    const dates = entries
+      .map((e) => new Date(e.created_at))
+      .sort((a, b) => a.getTime() - b.getTime());
     if (dates.length) {
       start = new Date(dates[0]);
       end = new Date(dates[dates.length - 1]);
@@ -91,26 +98,58 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
   const yearStarts: boolean[] = [];
   for (let i = 0; i < columns.length; i++) {
     const firstDay = columns[i][0]?.date;
-    const prevLast = i > 0 ? columns[i - 1][columns[i - 1].length - 1]?.date : null;
-    const isMonthStart = !prevLast || (firstDay && prevLast && firstDay.getMonth() !== prevLast.getMonth());
-    const isYearStart = !prevLast || (firstDay && prevLast && firstDay.getFullYear() !== prevLast.getFullYear());
+    const prevLast =
+      i > 0 ? columns[i - 1][columns[i - 1].length - 1]?.date : null;
+    const isMonthStart =
+      !prevLast ||
+      (firstDay && prevLast && firstDay.getMonth() !== prevLast.getMonth());
+    const isYearStart =
+      !prevLast ||
+      (firstDay &&
+        prevLast &&
+        firstDay.getFullYear() !== prevLast.getFullYear());
     monthStarts.push(!!isMonthStart);
     yearStarts.push(!!isYearStart);
     // Show month labels every 3 months only in year mode
-    const showMonthLabel = mode === "year" && isMonthStart && firstDay && firstDay.getMonth() % 3 === 0;
-    monthLabels.push(showMonthLabel && firstDay ? firstDay.toLocaleString(undefined, { month: "short" }) : "");
+    const showMonthLabel =
+      mode === "year" &&
+      isMonthStart &&
+      firstDay &&
+      firstDay.getMonth() % 3 === 0;
+    monthLabels.push(
+      showMonthLabel && firstDay
+        ? firstDay.toLocaleString(undefined, { month: "short" })
+        : "",
+    );
     // Year labels for all-time mode
-    yearLabels.push(isYearStart && firstDay ? String(firstDay.getFullYear()) : "");
+    yearLabels.push(
+      isYearStart && firstDay ? String(firstDay.getFullYear()) : "",
+    );
   }
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60 backdrop-blur p-4">
-      <div className="text-sm font-semibold mb-3">{mode === 'year' ? `Activity ${today.getFullYear()}` : (mode === 'all' ? 'Activity (All time)' : 'Activity')}</div>
+      <div className="text-sm font-semibold mb-3">
+        {mode === "year"
+          ? `Activity ${today.getFullYear()}`
+          : mode === "all"
+            ? "Activity (All time)"
+            : "Activity"}
+      </div>
       <div className="flex items-start gap-2 overflow-x-auto">
         {(mode === "year" || mode === "all") && (
-          <div className="flex flex-col gap-1 text-[10px] leading-none text-gray-500 dark:text-gray-400 select-none" style={{ marginTop: Math.max(0, (cellSize - 12) / 2) }}>
-            {['S','M','T','W','T','F','S'].map((d) => (
-              <div key={d} className="flex items-center justify-center" style={{ width: cellSize, height: cellSize }}>{d}</div>
+          <div
+            className="flex flex-col gap-1 text-[10px] leading-none text-gray-500 dark:text-gray-400 select-none"
+            style={{ marginTop: Math.max(0, (cellSize - 12) / 2) }}
+          >
+            {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
+              <div
+                key={d}
+                className="flex items-center justify-center"
+                style={{ width: cellSize, height: cellSize }}
+              >
+                {d}
+              </div>
             ))}
           </div>
         )}
@@ -146,7 +185,10 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
                     } ${intensity(d.count)}`}
                     style={{ width: cellSize, height: cellSize }}
                   />
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400 select-none" style={{ width: cellSize, height: 12 }}>
+                  <div
+                    className="text-[10px] text-gray-500 dark:text-gray-400 select-none"
+                    style={{ width: cellSize, height: 12 }}
+                  >
                     {"SMTWTFS"[d.date.getDay()]}
                   </div>
                 </div>
@@ -157,8 +199,12 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
               {columns.map((col, i) => (
                 <div
                   key={i}
-                  className={`flex flex-col gap-1 ${(mode === 'year') && monthStarts[i] ? 'border-l border-gray-200 dark:border-gray-800' : ''}`}
-                  title={(mode === 'year') && monthStarts[i] && col[0] ? col[0].date.toLocaleString(undefined, { month: 'long' }) : undefined}
+                  className={`flex flex-col gap-1 ${mode === "year" && monthStarts[i] ? "border-l border-gray-200 dark:border-gray-800" : ""}`}
+                  title={
+                    mode === "year" && monthStarts[i] && col[0]
+                      ? col[0].date.toLocaleString(undefined, { month: "long" })
+                      : undefined
+                  }
                 >
                   {col.map((d, j) => (
                     <div
@@ -191,4 +237,3 @@ export function ContributionGrid({ entries, mode = "year", weeks = 30, cellSize 
     </div>
   );
 }
-

@@ -49,7 +49,11 @@ const Login: React.FC = () => {
   async function handleEmailSignUp() {
     setErr(null);
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       setUser(result.user);
       navigate("/dashboard");
     } catch (e: any) {
@@ -62,7 +66,11 @@ const Login: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/50 backdrop-blur p-8 shadow-xl">
           <div className="w-full flex items-center justify-center mb-6">
-            <img src="/holonote-t.png" alt="HoloNote" className="h-16 w-16 rounded" />
+            <img
+              src="/holonote-t.png"
+              alt="HoloNote"
+              className="h-16 w-16 rounded"
+            />
           </div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-semibold tracking-tight">
@@ -153,7 +161,6 @@ const Login: React.FC = () => {
             .
           </div>
         </div>
-
       </div>
     </div>
   );

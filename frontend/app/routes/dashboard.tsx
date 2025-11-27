@@ -17,7 +17,10 @@ import { getAvgScore } from "../api/holos";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Dashboard" },
-    { name: "description", content: "Explore your entries and learn more about yourself!" },
+    {
+      name: "description",
+      content: "Explore your entries and learn more about yourself!",
+    },
   ];
 }
 
@@ -35,11 +38,13 @@ export default function Dashboard() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [filtered, setFiltered] = useState<Entry[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-  const [range, setRange] = useState<"week" | "month" | "year" | "all">("month");
+  const [range, setRange] = useState<"week" | "month" | "year" | "all">(
+    "month",
+  );
   const [showHoloPopup, setShowHoloPopup] = useState(false);
   const [refreshLatestHolo, setRefreshLatestHolo] = useState(false);
   const [avgScore, setAvgScore] = useState<number | null>(null);
-  
+
   // Use the custom hook for today's holo check
   const { data: todayHolo, refetch: refetchTodayHolo } = useTodayHolo();
   const hasTodayHolo = !!todayHolo;
@@ -82,13 +87,14 @@ export default function Dashboard() {
 
   function handleSearch(q: string) {
     const query = q.toLowerCase();
-    setFiltered(filterByRange(entries, range).filter(
-      (e) =>
-        e.title.toLowerCase().includes(query) ||
-        e.content.toLowerCase().includes(query)
-    ));
+    setFiltered(
+      filterByRange(entries, range).filter(
+        (e) =>
+          e.title.toLowerCase().includes(query) ||
+          e.content.toLowerCase().includes(query),
+      ),
+    );
   }
-
 
   function filterByRange(list: Entry[], r: typeof range) {
     const now = new Date();
@@ -104,7 +110,9 @@ export default function Dashboard() {
       return list;
     }
     start.setHours(0, 0, 0, 0);
-    return list.filter((e) => new Date(e.created_at) >= start && new Date(e.created_at) <= now);
+    return list.filter(
+      (e) => new Date(e.created_at) >= start && new Date(e.created_at) <= now,
+    );
   }
 
   useEffect(() => {
@@ -140,7 +148,9 @@ export default function Dashboard() {
     let prev: Date | null = null;
     for (const d of dates) {
       if (prev) {
-        const diff = Math.round((d.getTime() - prev.getTime()) / (24 * 3600 * 1000));
+        const diff = Math.round(
+          (d.getTime() - prev.getTime()) / (24 * 3600 * 1000),
+        );
         if (diff === 1) {
           current += 1;
         } else {
@@ -154,7 +164,11 @@ export default function Dashboard() {
     }
     best = Math.max(best, current);
 
-    return { totalEntries: base.length, currentStreak: streak, bestStreak: best };
+    return {
+      totalEntries: base.length,
+      currentStreak: streak,
+      bestStreak: best,
+    };
   }, [entries, range]);
 
   if (loading) {
@@ -170,12 +184,14 @@ export default function Dashboard() {
       <Toolbar onSearch={handleSearch} />
 
       <div className="flex items-center gap-2">
-        {([
-          { key: "week", label: "This week" },
-          { key: "month", label: "This month" },
-          { key: "year", label: "This year" },
-          { key: "all", label: "All time" },
-        ] as const).map((t) => (
+        {(
+          [
+            { key: "week", label: "This week" },
+            { key: "month", label: "This month" },
+            { key: "year", label: "This year" },
+            { key: "all", label: "All time" },
+          ] as const
+        ).map((t) => (
           <button
             key={t.key}
             onClick={() => setRange(t.key)}
@@ -190,7 +206,12 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <Stats totalEntries={totalEntries} currentStreak={currentStreak} bestStreak={bestStreak} avgScore={avgScore || 0} />
+      <Stats
+        totalEntries={totalEntries}
+        currentStreak={currentStreak}
+        bestStreak={bestStreak}
+        avgScore={avgScore || 0}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
@@ -202,8 +223,14 @@ export default function Dashboard() {
           <LatestEntries entries={filtered} loading={dataLoading} />
         </div>
         <div className="space-y-4">
-          <LatestHolo onStartHolo={() => setShowHoloPopup(true)} refreshTrigger={refreshLatestHolo} />
-          <HoloCTA onStartHolo={() => setShowHoloPopup(true)} hasTodayHolo={hasTodayHolo} />
+          <LatestHolo
+            onStartHolo={() => setShowHoloPopup(true)}
+            refreshTrigger={refreshLatestHolo}
+          />
+          <HoloCTA
+            onStartHolo={() => setShowHoloPopup(true)}
+            hasTodayHolo={hasTodayHolo}
+          />
         </div>
       </div>
 
@@ -214,8 +241,8 @@ export default function Dashboard() {
           // Refresh today's holo status after completion
           await refetchTodayHolo();
           // Trigger LatestHolo refresh
-          setRefreshLatestHolo(prev => !prev);
-          console.log('Holo completed successfully!');
+          setRefreshLatestHolo((prev) => !prev);
+          console.log("Holo completed successfully!");
         }}
       />
     </div>

@@ -1,5 +1,5 @@
-import { useAuthenticatedApi } from './useAuthenticatedApi';
-import { getLatestHoloDaily, type HoloDaily } from '../api/holos';
+import { useAuthenticatedApi } from "./useAuthenticatedApi";
+import { getLatestHoloDaily, type HoloDaily } from "../api/holos";
 
 /**
  * Custom hook for fetching the latest holo with authentication handling
@@ -7,6 +7,6 @@ import { getLatestHoloDaily, type HoloDaily } from '../api/holos';
 export function useLatestHolo(refreshTrigger?: boolean) {
   return useAuthenticatedApi<HoloDaily | null>(
     () => getLatestHoloDaily(),
-    [refreshTrigger]
+    [refreshTrigger],
   );
 }

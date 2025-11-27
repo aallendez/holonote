@@ -11,12 +11,12 @@ export function HoloCTA({ onStartHolo, hasTodayHolo = false }: HoloCTAProps) {
           <div className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             🎉 Great Job!
           </div>
-          
+
           <div className="mb-6">
             <div className="mb-2">
-              <img 
-                src="/logo.svg" 
-                alt="Holo Logo" 
+              <img
+                src="/logo.svg"
+                alt="Holo Logo"
                 className="mx-auto h-16 w-16 text-blue-600 dark:text-blue-400"
               />
             </div>
@@ -24,7 +24,7 @@ export function HoloCTA({ onStartHolo, hasTodayHolo = false }: HoloCTAProps) {
               You've already completed today's Holo
             </div>
           </div>
-          
+
           <div className="text-sm text-gray-500 dark:text-gray-400">
             Come back tomorrow for your next reflection
           </div>
@@ -39,16 +39,16 @@ export function HoloCTA({ onStartHolo, hasTodayHolo = false }: HoloCTAProps) {
         <div className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Ready for your Holo?
         </div>
-        
+
         {/* Logo */}
         <div className="mb-6">
-          <img 
-            src="/logo.svg" 
-            alt="Holo Logo" 
+          <img
+            src="/logo.svg"
+            alt="Holo Logo"
             className="mx-auto h-16 w-16 text-blue-600 dark:text-blue-400"
           />
         </div>
-        
+
         <button
           onClick={onStartHolo}
           className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/authContext';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/authContext";
 
 /**
  * Custom hook for making authenticated API calls
@@ -7,7 +7,7 @@ import { useAuth } from '../context/authContext';
  */
 export function useAuthenticatedApi<T>(
   apiCall: () => Promise<T>,
-  dependencies: any[] = []
+  dependencies: any[] = [],
 ) {
   const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<T | null>(null);
@@ -27,7 +27,7 @@ export function useAuthenticatedApi<T>(
       const result = await apiCall();
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setError(err instanceof Error ? err : new Error("Unknown error"));
       setData(null);
     } finally {
       setLoading(false);
@@ -45,6 +45,6 @@ export function useAuthenticatedApi<T>(
     loading: authLoading || loading,
     error,
     refetch: execute,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 }

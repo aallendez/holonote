@@ -7,7 +7,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import logo from "../../public/logo.svg";
 
 type ToolbarProps = {
-  onCreate?: () => void; 
+  onCreate?: () => void;
   onSearch: (query: string) => void;
 };
 
@@ -18,11 +18,7 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const photoUrl =
-    user?.photoURL ||
-    user?.providerData[0]?.photoURL ||
-    undefined;
-
-
+    user?.photoURL || user?.providerData[0]?.photoURL || undefined;
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -52,13 +48,18 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
   return (
     <div className="relative z-[9999] flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60 backdrop-blur p-4">
       <div className="flex items-center gap-3 text-lg font-semibold tracking-tight">
-        <Link to="/" className="hover:translate-x-1 transition-transform duration-300">
+        <Link
+          to="/"
+          className="hover:translate-x-1 transition-transform duration-300"
+        >
           <img src={logo} alt="Journal" className="w-10 h-10" />
         </Link>
         {loading ? (
           <LoadingSpinner label="Loading..." size={16} />
         ) : (
-          <span><span className="font-bold">{getUserName()}'s</span> Journal</span>
+          <span>
+            <span className="font-bold">{getUserName()}'s</span> Journal
+          </span>
         )}
       </div>
       <div className="flex w-full sm:w-auto items-center gap-4">
@@ -73,7 +74,9 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
             placeholder="Search entries..."
             className="w-full sm:w-72 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
           />
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">⌘K</div>
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            ⌘K
+          </div>
         </div>
         <button
           onClick={() => navigate("/new-entry")}
@@ -81,16 +84,31 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
         >
           New Entry
         </button>
-        <div className="relative flex items-center justify-center" ref={menuRef}>
+        <div
+          className="relative flex items-center justify-center"
+          ref={menuRef}
+        >
           <button
             aria-label="Account menu"
             onClick={() => setMenuOpen((o) => !o)}
             className="inline-flex items-center justify-center w-9 h-9 rounded-full  bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             {photoUrl ? (
-              <img src={photoUrl} alt={user?.displayName || "Account"} className="w-9 h-9 rounded-full object-cover" />
+              <img
+                src={photoUrl}
+                alt={user?.displayName || "Account"}
+                className="w-9 h-9 rounded-full object-cover"
+              />
             ) : (
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5 text-gray-600 dark:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M20 21a8 8 0 0 0-16 0" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
@@ -124,5 +142,3 @@ export function Toolbar({ onCreate, onSearch }: ToolbarProps) {
     </div>
   );
 }
-
-

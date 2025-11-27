@@ -49,12 +49,12 @@ export default function Entries() {
       setError(null);
       const entries = await getEntries();
       const foundEntry = entries.find((e: Entry) => e.entry_id === entryId);
-      
+
       if (!foundEntry) {
         setError("Entry not found");
         return;
       }
-      
+
       setEntry(foundEntry);
     } catch (err) {
       console.error("Failed to fetch entry:", err);
@@ -71,7 +71,7 @@ export default function Entries() {
       setDeleting(true);
       setError(null);
       await deleteEntry(entry.entry_id);
-      
+
       // Success - redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
@@ -113,7 +113,7 @@ export default function Entries() {
     return (
       <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
         <Toolbar onCreate={() => {}} onSearch={() => {}} />
-        
+
         <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-6">
           <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
             Error
@@ -135,7 +135,7 @@ export default function Entries() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
       <Toolbar onCreate={() => {}} onSearch={() => {}} />
-      
+
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <button
@@ -145,7 +145,7 @@ export default function Entries() {
             <span>←</span>
             Back to Dashboard
           </button>
-          
+
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}

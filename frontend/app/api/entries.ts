@@ -1,6 +1,7 @@
 import { fetchWithAuth } from "./auth";
 
-const RAW_API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:5001";
+const RAW_API_BASE =
+  (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:5001";
 const API_BASE = RAW_API_BASE.replace(/\/$/, "");
 const BASE_URL = `${API_BASE}/entries`;
 
@@ -9,6 +10,7 @@ export interface Entry {
   user_id: string;
   title: string;
   content: string;
+  score?: number;
   entry_date: string;
   created_at: string;
   updated_at: string;
@@ -33,10 +35,13 @@ export async function createEntry(entry: {
   return res.json();
 }
 
-export async function updateEntry(entry_id: string, entry: {
-  title: string;
-  content: string;
-}) {
+export async function updateEntry(
+  entry_id: string,
+  entry: {
+    title: string;
+    content: string;
+  },
+) {
   const res = await fetchWithAuth(`${BASE_URL}/${entry_id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -45,7 +50,8 @@ export async function updateEntry(entry_id: string, entry: {
   return res.json();
 }
 
-export async function deleteEntry(entry_id: string) { // Deleted_at is set in the backend
+export async function deleteEntry(entry_id: string) {
+  // Deleted_at is set in the backend
   const res = await fetchWithAuth(`${BASE_URL}/${entry_id}`, {
     method: "DELETE",
   });

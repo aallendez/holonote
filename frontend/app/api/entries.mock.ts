@@ -37,7 +37,7 @@ export function getMockEntries(count: number = 60): Entry[] {
       created_at: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
       updated_at: formatIso(new Date(exampleDate.getTime() + 40 * 60 * 1000)),
       deleted_at: undefined,
-    }
+    },
   );
 
   // Generate additional entries scattered over the last ~30 weeks to fill the grid
@@ -56,7 +56,9 @@ export function getMockEntries(count: number = 60): Entry[] {
       score: skewedRandomScore(),
       entry_date: formatIso(when),
       created_at: formatIso(when),
-      updated_at: formatIso(new Date(when.getTime() + randomInt(5, 90) * 60 * 1000)),
+      updated_at: formatIso(
+        new Date(when.getTime() + randomInt(5, 90) * 60 * 1000),
+      ),
       deleted_at: undefined,
     });
   }
@@ -66,7 +68,10 @@ export function getMockEntries(count: number = 60): Entry[] {
 
 function cryptoRandomId(): string {
   // Simple random UUID-ish string (not RFC compliant, but fine for mock)
-  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  const s4 = () =>
+    Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
   return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
@@ -85,5 +90,3 @@ function skewedRandomScore(): number {
   const r = Math.random();
   return Math.max(1, Math.min(10, Math.round(10 - Math.pow(r, 2) * 9)));
 }
-
-

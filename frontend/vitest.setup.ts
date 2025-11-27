@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Mock Firebase configuration for tests
 const mockFirebaseConfig = {
@@ -22,24 +22,24 @@ const mockAuth = {
 const mockApp = {};
 
 // Mock Firebase modules
-vi.mock('firebase/app', () => ({
+vi.mock("firebase/app", () => ({
   initializeApp: vi.fn().mockReturnValue(mockApp),
   getApp: vi.fn().mockReturnValue(mockApp),
   getApps: vi.fn().mockReturnValue([]),
 }));
 
-vi.mock('firebase/auth', () => ({
+vi.mock("firebase/auth", () => ({
   getAuth: vi.fn().mockReturnValue(mockAuth),
   GoogleAuthProvider: vi.fn().mockImplementation(() => ({})),
 }));
 
-vi.mock('firebase/analytics', () => ({
+vi.mock("firebase/analytics", () => ({
   getAnalytics: vi.fn().mockReturnValue({}),
   isSupported: vi.fn().mockResolvedValue(false),
 }));
 
 // Mock environment variables
-Object.defineProperty(import.meta, 'env', {
+Object.defineProperty(import.meta, "env", {
   value: {
     VITE_FIREBASE_API_KEY: mockFirebaseConfig.apiKey,
     VITE_FIREBASE_AUTH_DOMAIN: mockFirebaseConfig.authDomain,
