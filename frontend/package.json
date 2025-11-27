@@ -9,6 +9,8 @@
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "format:check": "npx prettier --check .",
+    "format": "npx prettier --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
