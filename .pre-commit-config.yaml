@@ -96,6 +96,6 @@ repos:
     hooks:
       - id: backend-tests
         name: Backend Unit Tests (fast)
-        entry: bash -c "cd backend && pytest -q --disable-warnings || exit 1"
+        entry: bash -c "cd backend && PYTHONPATH=. python -m pytest -q --disable-warnings || exit 1"
         language: system
         files: ^backend/.*\.py$

@@ -1,11 +1,12 @@
-import firebase_admin
-from firebase_admin import auth, credentials
-from .config import settings
-from sqlalchemy.orm import Session
-from src.db.session import SessionLocal
-from src.services.user_service import ensure_user_exists
 import json
 import logging
+
+import firebase_admin
+from firebase_admin import auth, credentials
+from src.db.session import SessionLocal
+from src.services.user_service import ensure_user_exists
+
+from .config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,15 +14,17 @@ logger = logging.getLogger(__name__)
 try:
     firebase_admin.get_app()
 except ValueError:
-    # Parse the service account key from environment variable
-    service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
-    cred = credentials.Certificate(service_account_info)
-    firebase_admin.initialize_app(
-        cred,
-        {
-            "projectId": settings.FIREBASE_PROJECT_ID,
-        },
-    )
+    # Only initialize if service account key is provided (skip in test environments)
+    if settings.FIREBASE_SERVICE_ACCOUNT_KEY:
+        # Parse the service account key from environment variable
+        service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
+        cred = credentials.Certificate(service_account_info)
+        firebase_admin.initialize_app(
+            cred,
+            {
+                "projectId": settings.FIREBASE_PROJECT_ID,
+            },
+        )
 
 
 def verify_token(id_token: str):
