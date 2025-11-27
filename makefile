@@ -10,10 +10,10 @@ install-frontend:
 	cd frontend && npm install && cd ..
 
 dev:
-	docker compose up
+	docker compose -f docker-compose.dev.yaml up
 
 down:
-	docker compose down
+	docker compose -f docker-compose.dev.yaml down
 
 restart:
 	make down
@@ -40,12 +40,6 @@ test-cov-b:
 test-cov:
 	make test-cov-f
 	make test-cov-b
-
-logs-f:
-	docker compose logs -f frontend
-
-logs-b:
-	docker compose logs -f backend
 
 open-f:
 	open http://localhost:5173/

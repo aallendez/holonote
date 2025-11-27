@@ -30,6 +30,33 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Release
+        id: semrel
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release version   
+
+      # Extract version from .semver file (created by python-semantic-release)
+      - name: Read version
+        id: get_version
+        run: echo "version=$(cat .semver)" >> $GITHUB_OUTPUT
+
+      # ---- Build & Push Docker images ----
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build backend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/holonote-backend:${{ steps.get_version.outputs.version }} backend
+
+      - name: Build frontend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }} frontend
+
+      - name: Push images
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/holonote-backend:${{ steps.get_version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }}
