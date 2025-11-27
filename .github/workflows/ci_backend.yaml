@@ -45,7 +45,7 @@ jobs:
         working-directory: ./backend
         run: |
           source .venv/bin/activate
-          pytest tests/ \
+          PYTHONPATH=. python -m pytest tests/ \
             --maxfail=1 \
             --disable-warnings \
             --cov=src \
