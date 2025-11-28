@@ -13,6 +13,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com",
+        "https://holonote.xyz",
+        "https://www.holonote.xyz",
     ],
     allow_credentials=True,
     allow_methods=["*"],
