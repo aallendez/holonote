@@ -43,3 +43,11 @@ In a final review of code implementation, I asked AI to sweep the codebase, chec
 Other chats: (these specially include architecture and infra decisions)
 - Backend implementation of firebase: https://chatgpt.com/share/68d6c9e8-d1f0-8001-9cc4-0cc8c82b8457
 - Frontend API calling implementation: https://chatgpt.com/share/68d821af-66c8-8001-8abc-865431e3658c
+
+
+### Sprint 3
+
+**CI/CD**
+- I used a lot of AI for debugging execution of the CI pipelines. There were a lot of errors related to github token permissions, frontend import paths and backend failures. I used cursor to debug and make the pipelines run correctly.
+
+**Infra**
