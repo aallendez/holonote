@@ -1,6 +1,8 @@
 import importlib
 import pkgutil
+
 from fastapi import FastAPI
+
 from . import routes
 
 

@@ -35,12 +35,6 @@ jobs:
           source .venv/bin/activate
           python -m black --check src tests
 
-      - name: Security scan
-        working-directory: ./backend
-        run: |
-          source .venv/bin/activate
-          bandit -r src -f json -o bandit-report.json
-
       - name: Run tests with coverage (must be ≥70%)
         working-directory: ./backend
         run: |

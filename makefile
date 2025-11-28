@@ -1,4 +1,9 @@
 .PHONY: install install-backend install-frontend dev down restart backend frontend test-frontend test-b test-cov-b format-check format
+
+help:
+	@echo "Available make commands:"
+	@grep -E '^[a-zA-Z0-9_-]+:' $(MAKEFILE_LIST) | cut -d: -f1 | grep -v '^\.' | sort -u | awk '{print " - "$$0}'
+
 install:
 	make install-backend
 	make install-frontend
@@ -19,12 +24,6 @@ restart:
 	make down
 	make dev
 
-backend:
-	cd backend && uvicorn main:app --reload
-
-frontend:
-	cd frontend && npm run dev
-
 test-f:
 	cd frontend && npm run test
 
@@ -34,18 +33,15 @@ test-cov-f:
 test-b:
 	cd backend && python -m pytest -q
 
+integration:
+	python -m pytest backend/tests/integration
+
 test-cov-b:
 	cd backend && COVERAGE_FILE=/tmp/holonote.coverage python -m pytest --maxfail=1 --disable-warnings --cov=src --cov-report=term-missing
 
 test-cov:
 	make test-cov-f
 	make test-cov-b
-
-open-f:
-	open http://localhost:5173/
-
-open-b:
-	open http://localhost:5001/docs#/
 
 format-check:
 	@if [ -d "backend" ]; then \
@@ -78,3 +74,6 @@ format:
 			python -m black src tests; \
 		fi; \
 	fi
+
+commit:
+	pre-commit run --all-files

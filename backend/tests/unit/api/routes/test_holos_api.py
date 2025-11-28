@@ -1,19 +1,14 @@
-import os
-from datetime import date, datetime
-from uuid import uuid4
-
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
-from sqlalchemy.orm import sessionmaker
 
 # Import the modules
 from main import app
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from src.db.session import Base, get_db
-from src.models.holos import HoloCreate, HoloUpdate, HoloDailyCreate
-from src.models.users import UserCreate
 from src.db.users import create_user
+from src.models.users import UserCreate
 
 
 @pytest.fixture()
@@ -71,9 +66,8 @@ def test_user(client):
 @pytest.fixture()
 def clean_holo_config(client):
     """Clean up any existing holo config for test user"""
-    from src.db.session import get_db
-    from src.db.holos import get_holo_config
     from sqlalchemy import delete
+    from src.db.session import get_db
     from src.models.holos import HoloTable
 
     override = app.dependency_overrides[get_db]

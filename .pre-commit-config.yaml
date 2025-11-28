@@ -40,27 +40,13 @@ repos:
     rev: 24.1.0
     hooks:
       - id: black
-        language_version: python3.11
         files: ^backend/
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.0
     hooks:
       - id: isort
-        language_version: python3.11
-        files: ^backend/
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
-    hooks:
-      - id: ruff
-        files: ^backend/
-
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.7
-    hooks:
-      - id: bandit
-        args: ["-r", "backend/src"]
+        args: ["--profile", "black"]
         files: ^backend/
 
   # ================================

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, Header, HTTPException
 from src.core.auth import verify_token, verify_token_and_ensure_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])

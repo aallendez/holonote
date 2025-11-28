@@ -1,9 +1,10 @@
-from sqlalchemy.orm import Session
-from src.models.users import UserCreate
-from src.models.holos import HoloCreate
-from src.db.users import get_user_by_id, create_user_in_transaction
-from src.db.holos import create_holo_config_in_transaction
 from typing import Optional
+
+from sqlalchemy.orm import Session
+from src.db.holos import create_holo_config_in_transaction
+from src.db.users import create_user_in_transaction, get_user_by_id
+from src.models.holos import HoloCreate
+from src.models.users import UserCreate
 
 # Default holo questions for new users (binary yes/no questions)
 DEFAULT_HOLO_QUESTIONS = [

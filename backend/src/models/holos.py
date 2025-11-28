@@ -1,18 +1,19 @@
-from pydantic import BaseModel, ConfigDict, field_serializer
-from datetime import datetime, date
-from sqlalchemy import (
-    Column,
-    String,
-    DateTime,
-    Integer,
-    UniqueConstraint,
-    ForeignKey,
-    Date,
-)
-from uuid import uuid4
-from src.db.session import Base
-from sqlalchemy import JSON
+from datetime import date, datetime
 from typing import Optional
+from uuid import uuid4
+
+from pydantic import BaseModel, ConfigDict, field_serializer
+from sqlalchemy import (
+    JSON,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+from src.db.session import Base
 
 
 class HoloTable(Base):

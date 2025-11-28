@@ -1,15 +1,14 @@
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from pydantic import ValidationError
-
 from main import app
+from pydantic import ValidationError
+from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from src.db.session import Base, get_db
 
 

@@ -3,14 +3,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.db.session import Base
 from src.db.users import (
-    get_user_by_id,
-    get_user_by_email,
     create_user,
-    update_user,
     delete_user,
+    get_user_by_email,
+    get_user_by_id,
+    update_user,
     user_exists,
 )
-from src.models.users import UserCreate, UserUpdate, UserTable
+from src.models.users import UserCreate, UserUpdate
 
 
 @pytest.fixture()

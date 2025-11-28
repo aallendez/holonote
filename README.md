@@ -7,13 +7,13 @@ Before you run this app, make sure you have installed npm, python, and docker de
 
 ### 0. Requirements
 
-- Python Version equal or higher to 3.11 
+- Python Version equal or higher to 3.11
 
 ### 1. Install dependencies
 
 Create virtual env
 ```bash
-cd backend && python -m venv .venv 
+cd backend && python -m venv .venv
 ```
 Enter virtual env
 ```bash
@@ -22,11 +22,11 @@ source .venv/bin/activate && cd ..
 
 Install backend and frontend dependencies
 ```bash
-make install 
+make install
 ```
 Build your application
 ```bash
-make dev 
+make dev
 ```
 
 ### 2. Access frontend and backend
@@ -36,7 +36,7 @@ make open-f
 ```
 Open backend
 ```bash
-make open-b 
+make open-b
 ```
 
 ### 3. Logs (if needed). Need to be in separate terminals.
@@ -71,4 +71,3 @@ Frontend
 ```bash
 make test-cov-f
 ```
-

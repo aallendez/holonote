@@ -1,5 +1,5 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from src.core.auth import verify_token, verify_token_and_ensure_user
 
 

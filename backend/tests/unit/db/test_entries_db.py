@@ -4,10 +4,9 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from src.db.entries import get_entries, create_entry, update_entry, delete_entry
-from src.models.entries import EntryCreate, EntryUpdate, EntryTable
+from src.db.entries import create_entry, delete_entry, get_entries, update_entry
 from src.db.session import Base
+from src.models.entries import EntryCreate, EntryUpdate
 
 
 @pytest.fixture()

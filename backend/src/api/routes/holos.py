@@ -1,22 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List
 from datetime import date
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from pydantic import ValidationError
+from typing import List
 
-from src.models.holos import Holo, HoloCreate, HoloUpdate, HoloDaily, HoloDailyCreate
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import ValidationError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm import Session
+from src.api.routes.auth import get_current_user
 from src.db.holos import (
-    get_holo_config,
-    update_holo_config,
     create_holo_config,
-    get_holo_daily_by_date,
-    get_latest_holo_daily,
     create_holo_daily,
     get_avg_score,
+    get_holo_config,
+    get_holo_daily_by_date,
+    get_latest_holo_daily,
+    update_holo_config,
 )
 from src.db.session import get_db
-from src.api.routes.auth import get_current_user
+from src.models.holos import Holo, HoloCreate, HoloDaily, HoloDailyCreate, HoloUpdate
 
 router = APIRouter(prefix="/holos", tags=["holos"])
 

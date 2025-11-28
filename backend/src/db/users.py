@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
 from datetime import datetime
-from src.models.users import UserTable, UserCreate, UserUpdate, User
+
+from sqlalchemy.orm import Session
+from src.models.users import User, UserCreate, UserTable, UserUpdate
 
 
 def get_user_by_id(user_id: str, db: Session):

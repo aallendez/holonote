@@ -1,16 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends
+from datetime import datetime
 from typing import List
 from uuid import uuid4
-from datetime import datetime
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from pydantic import ValidationError
 
-from src.models.entries import Entry, EntryCreate, EntryCreateRequest, EntryUpdate
-from pydantic import BaseModel
-from src.db.entries import get_entries, create_entry, update_entry, delete_entry
-from src.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ValidationError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm import Session
 from src.api.routes.auth import get_current_user
+from src.db.entries import create_entry, delete_entry, get_entries, update_entry
+from src.db.session import get_db
+from src.models.entries import Entry, EntryCreate, EntryCreateRequest, EntryUpdate
 
 router = APIRouter(prefix="/entries", tags=["entries"])
 

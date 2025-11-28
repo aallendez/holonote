@@ -1,14 +1,12 @@
 import pytest
-from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from src.db.session import SessionLocal, Base
-from src.services.user_service import ensure_user_exists, DEFAULT_HOLO_QUESTIONS
-from src.db.users import get_user_by_id, user_exists
 from src.db.holos import get_holo_config
+from src.db.session import Base, SessionLocal
+from src.db.users import get_user_by_id, user_exists
 from src.models.users import UserTable
-from unittest.mock import patch, MagicMock
+from src.services.user_service import DEFAULT_HOLO_QUESTIONS, ensure_user_exists
 
 
 @pytest.fixture(autouse=True)
@@ -26,9 +24,9 @@ def _use_in_memory_sqlite(monkeypatch):
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     # Ensure all models are imported so tables are registered on Base.metadata
-    from src.models import users as _users_models  # noqa: F401
-    from src.models import holos as _holos_models  # noqa: F401
     from src.models import entries as _entries_models  # noqa: F401
+    from src.models import holos as _holos_models  # noqa: F401
+    from src.models import users as _users_models  # noqa: F401
 
     # Create schema
     Base.metadata.create_all(bind=engine)

@@ -1,9 +1,9 @@
 from datetime import datetime
-from uuid import uuid4
-from sqlalchemy.orm import Session
 from typing import Optional
+from uuid import uuid4
 
-from src.models.entries import EntryTable, EntryCreate, EntryUpdate, EntryDelete
+from sqlalchemy.orm import Session
+from src.models.entries import EntryCreate, EntryDelete, EntryTable, EntryUpdate
 
 
 def get_entries(user_id: str, db: Session):

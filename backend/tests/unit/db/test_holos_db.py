@@ -1,4 +1,3 @@
-import os
 from datetime import date
 from uuid import uuid4
 
@@ -9,22 +8,16 @@ from sqlalchemy.pool import StaticPool
 
 # Import the modules
 from src.db.holos import (
-    get_holo_config,
-    update_holo_config,
     create_holo_config,
-    get_holo_daily_by_date,
-    get_latest_holo_daily,
     create_holo_daily,
     get_avg_score,
-)
-from src.models.holos import (
-    HoloCreate,
-    HoloUpdate,
-    HoloDailyCreate,
-    HoloTable,
-    HoloDailiesTable,
+    get_holo_config,
+    get_holo_daily_by_date,
+    get_latest_holo_daily,
+    update_holo_config,
 )
 from src.db.session import Base
+from src.models.holos import HoloCreate, HoloDailyCreate, HoloTable, HoloUpdate
 
 
 @pytest.fixture()

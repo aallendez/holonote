@@ -1,9 +1,10 @@
-from pydantic import BaseModel
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, Integer
-from uuid import uuid4
-from src.db.session import Base
 from typing import Optional
+from uuid import uuid4
+
+from pydantic import BaseModel
+from sqlalchemy import Column, DateTime, Integer, String
+from src.db.session import Base
 
 
 class EntryTable(Base):

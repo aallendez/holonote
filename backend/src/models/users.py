@@ -1,8 +1,9 @@
-from pydantic import BaseModel
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime
-from src.db.session import Base
 from typing import Optional
+
+from pydantic import BaseModel
+from sqlalchemy import Column, DateTime, String
+from src.db.session import Base
 
 
 class UserTable(Base):
