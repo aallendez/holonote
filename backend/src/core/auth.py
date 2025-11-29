@@ -12,11 +12,25 @@ logger = logging.getLogger(__name__)
 
 
 # Initialize Firebase Admin SDK
+_firebase_initialized = False
+
+
 def initialize_firebase():
     """Initialize Firebase Admin SDK if not already initialized"""
+    global _firebase_initialized
+
+    # Check if already initialized in this process
+    if _firebase_initialized:
+        try:
+            firebase_admin.get_app()
+            return True
+        except ValueError:
+            _firebase_initialized = False
+
     try:
         firebase_admin.get_app()
         logger.info("Firebase Admin SDK already initialized")
+        _firebase_initialized = True
         return True
     except ValueError:
         # Only initialize if service account key is provided (skip in test environments)
@@ -42,6 +56,7 @@ def initialize_firebase():
                 },
             )
             logger.info("Firebase Admin SDK initialized successfully")
+            _firebase_initialized = True
             return True
         except json.JSONDecodeError as e:
             logger.error(
@@ -61,6 +76,14 @@ initialize_firebase()
 
 def verify_token(id_token: str):
     """Verify Firebase ID token from frontend"""
+    # Ensure Firebase is initialized (in case it wasn't during module import)
+    if not initialize_firebase():
+        logger.error(
+            "Firebase Admin SDK not initialized. Cannot verify tokens. "
+            "Set FIREBASE_SERVICE_ACCOUNT_KEY environment variable."
+        )
+        return None
+
     try:
         # Check if Firebase is initialized
         firebase_admin.get_app()
@@ -81,6 +104,14 @@ def verify_token(id_token: str):
 
 def verify_token_and_ensure_user(id_token: str):
     """Verify Firebase ID token and ensure user exists in database"""
+    # Ensure Firebase is initialized (in case it wasn't during module import)
+    if not initialize_firebase():
+        logger.error(
+            "Firebase Admin SDK not initialized. Cannot verify tokens. "
+            "Set FIREBASE_SERVICE_ACCOUNT_KEY environment variable."
+        )
+        return None
+
     try:
         # Check if Firebase is initialized
         firebase_admin.get_app()
