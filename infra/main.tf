@@ -28,6 +28,8 @@ module "backend" {
   ecr_backend_repo = var.ecr_backend_repo
   ecr_nginx_repo   = var.ecr_nginx_repo
 
+  frontend_s3_bucket = var.frontend_bucket_name
+
   db_endpoint = module.db.endpoint
   db_port     = module.db.port
   db_name     = var.db_name

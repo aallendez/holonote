@@ -9,7 +9,7 @@ db_name = "holonotedb"
 
 # --- PROD VERSION ---
 # Single version for both backend and frontend
-prod_version = "1.12.0"
+prod_version = "1.13.1"
 
 ecr_backend_repo = "ghcr.io/aallendez/holonote-backend"
 ecr_nginx_repo   = "ghcr.io/aallendez/holonote-frontend"

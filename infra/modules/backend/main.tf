@@ -34,6 +34,41 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Task role for application-level permissions (S3 access for nginx)
+resource "aws_iam_role" "task_role" {
+  name = "holonote-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ecs-tasks.amazonaws.com" }
+    }]
+  })
+}
+
+# IAM policy for S3 access (nginx container needs to sync frontend files from S3)
+resource "aws_iam_role_policy" "s3_read_policy" {
+  name = "holonote-s3-read-policy"
+  role = aws_iam_role.task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ]
+      Resource = [
+        "arn:aws:s3:::${var.frontend_s3_bucket}",
+        "arn:aws:s3:::${var.frontend_s3_bucket}/*"
+      ]
+    }]
+  })
+}
+
 # IAM policy for Secrets Manager access (uncomment after secrets are created)
 # resource "aws_iam_role_policy" "secrets_manager_policy" {
 #   name = "holonote-secrets-manager-policy"
@@ -74,6 +109,7 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = 256
   memory                   = 512
   execution_role_arn       = aws_iam_role.task_execution_role.arn
+  task_role_arn            = aws_iam_role.task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -82,6 +118,9 @@ resource "aws_ecs_task_definition" "this" {
       essential = true
       portMappings = [
         { containerPort = 80 }
+      ]
+      environment = [
+        { name = "S3_BUCKET", value = var.frontend_s3_bucket }
       ]
       dependsOn = [{
         containerName = "backend"

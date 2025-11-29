@@ -79,3 +79,11 @@ jobs:
       - name: Push backend image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/holonote-backend:${{ steps.get_version.outputs.version }}
+
+      - name: Build nginx image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }} -f nginx/Dockerfile .
+
+      - name: Push nginx image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }}

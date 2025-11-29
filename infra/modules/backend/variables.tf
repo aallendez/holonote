@@ -35,3 +35,8 @@ variable "db_password" {
   sensitive   = true
   description = "Database password (use variables initially, switch to secrets later)"
 }
+
+variable "frontend_s3_bucket" {
+  type        = string
+  description = "S3 bucket name where frontend static files are stored"
+}
