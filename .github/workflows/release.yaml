@@ -48,6 +48,22 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
 
+      # --- Build FRONTEND (React) ---
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
       # ---- Build & Push Docker images ----
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -60,13 +76,6 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/holonote-backend:${{ steps.get_version.outputs.version }} backend
 
-      - name: Build frontend image
-        run: |
-          # Copy nginx config into frontend directory for Docker build
-          cp nginx.prod.conf frontend/nginx.prod.conf
-          docker build -t ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }} frontend
-
-      - name: Push images
+      - name: Push backend image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/holonote-backend:${{ steps.get_version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/holonote-frontend:${{ steps.get_version.outputs.version }}
