@@ -10,25 +10,67 @@ from .config import settings
 
 logger = logging.getLogger(__name__)
 
+
 # Initialize Firebase Admin SDK
-try:
-    firebase_admin.get_app()
-except ValueError:
-    # Only initialize if service account key is provided (skip in test environments)
-    if settings.FIREBASE_SERVICE_ACCOUNT_KEY:
-        # Parse the service account key from environment variable
-        service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
-        cred = credentials.Certificate(service_account_info)
-        firebase_admin.initialize_app(
-            cred,
-            {
-                "projectId": settings.FIREBASE_PROJECT_ID,
-            },
-        )
+def initialize_firebase():
+    """Initialize Firebase Admin SDK if not already initialized"""
+    try:
+        firebase_admin.get_app()
+        logger.info("Firebase Admin SDK already initialized")
+        return True
+    except ValueError:
+        # Only initialize if service account key is provided (skip in test environments)
+        if not settings.FIREBASE_SERVICE_ACCOUNT_KEY:
+            logger.warning(
+                "FIREBASE_SERVICE_ACCOUNT_KEY not set. Firebase Admin SDK will not be initialized."
+            )
+            return False
+
+        try:
+            # Parse the service account key from environment variable
+            service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
+            # Extract project_id from service account key (it's already in there)
+            project_id = service_account_info.get("project_id")
+            if not project_id:
+                logger.error("Firebase service account key missing project_id")
+                return False
+            cred = credentials.Certificate(service_account_info)
+            firebase_admin.initialize_app(
+                cred,
+                {
+                    "projectId": project_id,
+                },
+            )
+            logger.info("Firebase Admin SDK initialized successfully")
+            return True
+        except json.JSONDecodeError as e:
+            logger.error(
+                f"Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY as JSON: {str(e)}"
+            )
+            return False
+        except Exception as e:
+            logger.error(
+                f"Failed to initialize Firebase Admin SDK: {str(e)}", exc_info=True
+            )
+            return False
+
+
+# Initialize on module import
+initialize_firebase()
 
 
 def verify_token(id_token: str):
     """Verify Firebase ID token from frontend"""
+    try:
+        # Check if Firebase is initialized
+        firebase_admin.get_app()
+    except ValueError:
+        logger.error(
+            "Firebase Admin SDK not initialized. Cannot verify tokens. "
+            "Set FIREBASE_SERVICE_ACCOUNT_KEY environment variable."
+        )
+        return None
+
     try:
         decoded_token = auth.verify_id_token(id_token)
         return decoded_token
@@ -39,6 +81,16 @@ def verify_token(id_token: str):
 
 def verify_token_and_ensure_user(id_token: str):
     """Verify Firebase ID token and ensure user exists in database"""
+    try:
+        # Check if Firebase is initialized
+        firebase_admin.get_app()
+    except ValueError:
+        logger.error(
+            "Firebase Admin SDK not initialized. Cannot verify tokens. "
+            "Set FIREBASE_SERVICE_ACCOUNT_KEY environment variable."
+        )
+        return None
+
     try:
         decoded_token = auth.verify_id_token(id_token)
         if not decoded_token:
