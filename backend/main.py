@@ -20,6 +20,7 @@ app = FastAPI()
 # Note: Cannot use "*" with allow_credentials=True, so we need explicit origins
 allowed_origins = [
     "http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com",
+    "https://d1i7v3bh4lq4r0.cloudfront.net",  # CloudFront HTTPS URL
     "http://holonote-alb-1922459695.eu-west-1.elb.amazonaws.com",
     "http://localhost:5173",  # For local development
     "http://localhost:3000",  # Alternative local port
