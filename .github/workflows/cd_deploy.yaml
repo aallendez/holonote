@@ -3,7 +3,7 @@ name: CD Deploy
 on:
   push:
     paths:
-      - "infra/terraform.tfvars"   # ONLY trigger when this file changes
+      - "infra/terraform.tfvars"   # ONLY trigger when version bump happens
     branches:
       - main
 
@@ -16,24 +16,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
-      # --- Configure AWS Credentials (via OIDC) ---
-      # secrets.AWS_ROLE_ARN must be set in GitHub repo settings
+      # --- Read version from terraform.tfvars ---
+      - name: Read prod version from terraform.tfvars
+        id: version
+        run: |
+          VERSION=$(grep 'image_tag' infra/terraform.tfvars | sed 's/.*= "//; s/"//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Deploying version: $VERSION"
+
+      # --- Checkout the EXACT version tag ---
+      - name: Checkout release tag
+        run: |
+          git fetch --all --tags
+          git checkout v${{ steps.version.outputs.version }}
+
+      # --- Configure AWS Credentials (OIDC) ---
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: eu-west-1
 
-      # --- Upload frontend to S3 ---
+      # --- Build Frontend (React) ---
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      # --- Upload Frontend to S3 ---
       - name: Upload frontend to S3
         run: |
           aws s3 sync frontend/build/client/ s3://holonote-frontend-prod --delete
 
       # --- TERRAFORM DEPLOY ---
-      - name: Install Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
