@@ -2,14 +2,10 @@
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-# Secrets Manager data sources (uncomment after secrets are created)
-# data "aws_secretsmanager_secret" "db_user" {
-#   name = "holonote_db_user"
-# }
-#
-# data "aws_secretsmanager_secret" "db_password" {
-#   name = "holonote_db_password"
-# }
+# Secrets Manager data source for Firebase service account key
+data "aws_secretsmanager_secret" "firebase_service_account" {
+  name = "holonote-firebase-service-account-key"
+}
 
 resource "aws_ecs_cluster" "this" {
   name = "holonote-cluster"
@@ -69,26 +65,25 @@ resource "aws_iam_role_policy" "s3_read_policy" {
   })
 }
 
-# IAM policy for Secrets Manager access (uncomment after secrets are created)
-# resource "aws_iam_role_policy" "secrets_manager_policy" {
-#   name = "holonote-secrets-manager-policy"
-#   role = aws_iam_role.task_execution_role.id
-#
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [{
-#       Effect = "Allow"
-#       Action = [
-#         "secretsmanager:GetSecretValue",
-#         "secretsmanager:DescribeSecret"
-#       ]
-#       Resource = [
-#         data.aws_secretsmanager_secret.db_user.arn,
-#         data.aws_secretsmanager_secret.db_password.arn
-#       ]
-#     }]
-#   })
-# }
+# IAM policy for Secrets Manager access (Firebase service account key)
+resource "aws_iam_role_policy" "secrets_manager_policy" {
+  name = "holonote-secrets-manager-policy"
+  role = aws_iam_role.task_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+      ]
+      Resource = [
+        data.aws_secretsmanager_secret.firebase_service_account.arn
+      ]
+    }]
+  })
+}
 
 # CloudWatch Log Groups
 resource "aws_cloudwatch_log_group" "nginx" {
@@ -146,17 +141,12 @@ resource "aws_ecs_task_definition" "this" {
         { name = "DB_USER", value = var.db_username },
         { name = "DB_PASSWORD", value = var.db_password }
       ]
-      # Use secrets instead of environment variables after secrets are created:
-      # secrets = [
-      #   {
-      #     name      = "DB_USER"
-      #     valueFrom = data.aws_secretsmanager_secret.db_user.arn
-      #   },
-      #   {
-      #     name      = "DB_PASSWORD"
-      #     valueFrom = data.aws_secretsmanager_secret.db_password.arn
-      #   }
-      # ]
+      secrets = [
+        {
+          name      = "FIREBASE_SERVICE_ACCOUNT_KEY"
+          valueFrom = data.aws_secretsmanager_secret.firebase_service_account.arn
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {

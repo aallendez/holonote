@@ -14,3 +14,8 @@
 
 ### Nov 28th, 2025
 - I created a small set of simple integration tests.
+- I set up the CD pipeline (not working yet).
+- I created the initial AWS infra with terraform.
+
+### Nov 29th, 2025
+- Spent the day debugging issues between resources (ECS, RDS and frontend in S3)

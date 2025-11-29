@@ -9,7 +9,10 @@ db_name = "holonotedb"
 
 # --- PROD VERSION ---
 # Single version for both backend and frontend
-prod_version = "1.13.1"
+prod_version = "1.13.7"
 
 ecr_backend_repo = "ghcr.io/aallendez/holonote-backend"
 ecr_nginx_repo   = "ghcr.io/aallendez/holonote-frontend"
+
+# Firebase service account key is stored in AWS Secrets Manager
+# Secret name: holonote-firebase-service-account-key
