@@ -86,3 +86,17 @@ coverage/
 .puml
 codebase.md
 diagrams/
+
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+crash.log
+crash.*.log
+*.tfplan
+*.tfplan.json
+override.tf
+override.tf.json
+*\_override.tf
+*\_override.tf.json
+.terraform.lock.hcl
+terraform.tfstate.*.backup
