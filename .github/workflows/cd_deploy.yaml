@@ -27,7 +27,11 @@ jobs:
       - name: Read prod version from terraform.tfvars
         id: version
         run: |
-          VERSION=$(grep 'image_tag' infra/terraform.tfvars | sed 's/.*= "//; s/"//')
+          VERSION=$(grep 'prod_version' infra/terraform.tfvars | sed 's/.*= "//; s/"//')
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not find prod_version in terraform.tfvars"
+            exit 1
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Deploying version: $VERSION"
 

@@ -1,9 +1,14 @@
+import logging
 import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.router import Router
 from src.db.session import Base, engine
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -27,7 +32,15 @@ async def startup_event():
         "PYTEST_CURRENT_TEST"
     ):  # Automatically set by pytest when running tests
         return
-    Base.metadata.create_all(bind=engine)
+
+    try:
+        logger.info("Attempting to create database tables...")
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Failed to create database tables: {str(e)}", exc_info=True)
+        # Don't raise - allow the app to start even if tables already exist
+        # This prevents the app from crashing if tables are already created
 
 
 # Register routes automatically

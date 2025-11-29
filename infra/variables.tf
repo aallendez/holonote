@@ -14,13 +14,15 @@ variable "db_name" {
 
 variable "db_username" {
   type        = string
-  description = "Database admin username"
+  default     = ""
+  description = "Database admin username (deprecated: now retrieved from AWS Secrets Manager secret 'holonote-db-login')"
 }
 
 variable "db_password" {
   type        = string
+  default     = ""
   sensitive   = true
-  description = "Database admin password"
+  description = "Database admin password (deprecated: now retrieved from AWS Secrets Manager secret 'holonote-db-login')"
 }
 
 # Backend (ECS)

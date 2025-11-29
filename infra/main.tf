@@ -1,5 +1,18 @@
 ## HOLONOTE PROD
 
+# --- DATABASE CREDENTIALS FROM AWS SECRETS MANAGER ---
+data "aws_secretsmanager_secret" "db_login" {
+  name = "holonote-db-login"
+}
+
+data "aws_secretsmanager_secret_version" "db_login" {
+  secret_id = data.aws_secretsmanager_secret.db_login.id
+}
+
+locals {
+  db_credentials = jsondecode(data.aws_secretsmanager_secret_version.db_login.secret_string)
+}
+
 # --- FRONTEND (S3 for React SPA) ---
 module "frontend" {
   source      = "./modules/frontend"
@@ -26,9 +39,10 @@ module "backend" {
 # Migrated from Lightsail to RDS for better VPC integration and security
 # DB module uses a data source to find the ECS security group by name
 # This allows RDS to only accept connections from ECS tasks
+# Database credentials are retrieved from AWS Secrets Manager secret "holonote-db-login"
 module "db" {
   source      = "./modules/db"
   db_name     = var.db_name
-  db_username = var.db_username
-  db_password = var.db_password
+  db_username = local.db_credentials.username
+  db_password = local.db_credentials.password
 }

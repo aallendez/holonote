@@ -2,17 +2,13 @@
 frontend_bucket_name = "holonote-frontend-prod"
 
 # --- Database ---
-# These credentials will be used to create the database initially.
-# After DB creation, create AWS Secrets Manager secrets:
-#   - holonote_db_user (with the username value)
-#   - holonote_db_password (with the password value)
-# Then update the backend module to use secrets instead of variables.
-db_name     = "holonotedb"
-db_username = ""
-db_password = ""
+# Database credentials are retrieved from AWS Secrets Manager secret "holonote-db-login"
+# The secret should contain JSON with "username" and "password" fields
+db_name = "holonotedb"
+# db_username and db_password retrieved from AWS Secrets Manager
 
-# --- Backend images ---
-# Single version for both backend and frontend (they're built together)
+# --- PROD VERSION ---
+# Single version for both backend and frontend
 prod_version = "1.12.0"
 
 ecr_backend_repo = "ghcr.io/aallendez/holonote-backend"
