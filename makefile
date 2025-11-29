@@ -77,3 +77,20 @@ format:
 
 commit:
 	pre-commit run --all-files
+
+# AWS Logs
+logs-aws-backend:
+	@echo "Viewing backend logs from CloudWatch..."
+	@aws logs tail /ecs/holonote/backend --follow
+
+logs-aws-nginx:
+	@echo "Viewing nginx logs from CloudWatch..."
+	@aws logs tail /ecs/holonote/nginx --follow
+
+logs-aws-backend-recent:
+	@echo "Viewing recent backend logs (last 1 hour)..."
+	@aws logs tail /ecs/holonote/backend --since 1h
+
+logs-aws-nginx-recent:
+	@echo "Viewing recent nginx logs (last 1 hour)..."
+	@aws logs tail /ecs/holonote/nginx --since 1h
