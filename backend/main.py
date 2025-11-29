@@ -43,5 +43,11 @@ async def startup_event():
         # This prevents the app from crashing if tables are already created
 
 
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
 # Register routes automatically
 Router(app).load_routers()
