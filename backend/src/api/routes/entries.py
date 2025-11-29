@@ -14,7 +14,7 @@ from src.models.entries import Entry, EntryCreate, EntryCreateRequest, EntryUpda
 router = APIRouter(prefix="/entries", tags=["entries"])
 
 
-@router.get("/", response_model=List[Entry])
+@router.get("", response_model=List[Entry])
 def get_entries_route(db: Session = Depends(get_db), user=Depends(get_current_user)):
     """Get all entries for a user"""
     try:
@@ -29,7 +29,7 @@ def get_entries_route(db: Session = Depends(get_db), user=Depends(get_current_us
         )
 
 
-@router.post("/", response_model=Entry)
+@router.post("", response_model=Entry)
 def create_entry_route(
     entry: EntryCreateRequest,
     db: Session = Depends(get_db),
