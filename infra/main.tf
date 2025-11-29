@@ -38,9 +38,6 @@ module "backend" {
 }
 
 # --- DATABASE (RDS PostgreSQL) ---
-# Migrated from Lightsail to RDS for better VPC integration and security
-# DB module uses a data source to find the ECS security group by name
-# This allows RDS to only accept connections from ECS tasks
 # Database credentials are retrieved from AWS Secrets Manager secret "holonote-db-login"
 module "db" {
   source      = "./modules/db"
