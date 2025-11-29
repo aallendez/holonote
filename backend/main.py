@@ -7,16 +7,12 @@ from src.db.session import Base, engine
 
 app = FastAPI()
 
-# CORS configuration to allow frontend dev server
+# CORS configuration
+# In production, frontend and backend are served from the same ALB
+# Allow all origins for now - can be restricted later for better security
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com",
-        "https://holonote.xyz",
-        "https://www.holonote.xyz",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
