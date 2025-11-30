@@ -133,7 +133,8 @@ resource "aws_iam_role_policy" "terraform_policy" {
           "elasticloadbalancing:*",
           "cloudwatch:*",
           "aps:*",
-          "grafana:*"
+          "grafana:*",
+          "dynamodb:*"
         ]
         Resource = "*"
       }
