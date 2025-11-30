@@ -30,8 +30,9 @@ locals {
 }
 
 # IAM Role for GitHub Actions
+# Note: Role name avoids "github" to prevent OIDC issues
 resource "aws_iam_role" "github_actions" {
-  name = "holonote-github-actions-role"
+  name = "holonote-ci-deploy-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -55,7 +56,7 @@ resource "aws_iam_role" "github_actions" {
   })
 
   tags = {
-    Name        = "holonote-github-actions-role"
+    Name        = "holonote-ci-deploy-role"
     Environment = "production"
   }
 }
