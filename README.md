@@ -59,10 +59,10 @@ Integration (Backend)
 make integration
 ```
 
+You can access a report of frontend and backend unit test coverage as well as integration tests by checking the `test_results.txt` file at repo root.
+
 ## Production
 Holonote is currently deployed in AWS. For information about deployment and resources used, please visit `infra/` directory in this repo.
 
 - You can **access holonote** through this link http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com
     - ⚠️ Warning: make sure the protocol is http (not https). Otherwise the page will not load.
-
-- You can see a snapshot of our **grafana dashboard** through this link https://g-f2a9ab6939.grafana-workspace.eu-west-1.amazonaws.com/dashboard/snapshot/6yMwyfUE1a2Qw5jJbwJR7akGlehNREOf

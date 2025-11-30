@@ -51,3 +51,13 @@ Other chats: (these specially include architecture and infra decisions)
 - I used a lot of AI for debugging execution of the CI pipelines. There were a lot of errors related to github token permissions, frontend import paths and backend failures. I used cursor to debug and make the pipelines run correctly.
 
 **Infra**
+- AI helped me set up GitHub Actions OIDC authentication with AWS: created Terraform module for IAM role with proper trust policy, fixed repository name mismatch (aallendez/holonote), and configured S3 backend + DynamoDB for Terraform state management. Fixed CD workflow to use latest infrastructure code and added Firebase environment variables to build step.
+- AI helped me migrate from self-hosted Prometheus/Grafana to AWS Managed Services (AMP + Managed Grafana): configured Terraform modules, set up backend metrics instrumentation, configured AWS IAM Identity Center authentication for Grafana, and cleaned up all old infrastructure files.
+
+**Backend (Production Debugging)**
+- AI helped debug a 307 Temporary Redirect issue with the `/entries` endpoint in production. Fixed by disabling FastAPI's automatic trailing slash redirects (`redirect_slashes=False`) and changing entries routes from `"/"` to empty string `""` to match nginx forwarding behavior. Verified the fix with route testing and identified the deployment process needed Docker image rebuilds.
+- AI helped debug and fix critical production authentication failures: resolved Firebase Admin SDK initialization errors by configuring AWS Secrets Manager integration in Terraform, fixed CORS configuration (removed incompatible wildcard with credentials), and implemented lazy Firebase initialization to handle race conditions in multi-worker environments.
+    The solution eliminated the need for Firebase environment variables in Terraform by extracting project_id directly from the service account key stored in Secrets Manager, simplifying the infrastructure configuration.
+
+**Frontend (Production Debugging)**
+- AI fixed S3 404 errors for direct navigation to SPA routes (e.g., `/entries?entry=...`) by adding `error_document` configuration pointing to `index.html` in the S3 website configuration. This allows client-side routing to handle all routes properly when users navigate directly to deep links.
