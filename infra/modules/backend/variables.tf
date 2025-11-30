@@ -40,3 +40,9 @@ variable "frontend_s3_bucket" {
   type        = string
   description = "S3 bucket name where frontend static files are stored"
 }
+
+variable "amp_remote_write_endpoint" {
+  type        = string
+  description = "Amazon Managed Prometheus remote write endpoint URL"
+  default     = ""
+}

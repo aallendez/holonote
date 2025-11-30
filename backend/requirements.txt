@@ -4,6 +4,9 @@ sqlalchemy
 PyMySQL
 firebase-admin
 psycopg2-binary
+prometheus-fastapi-instrumentator
+boto3
+requests
 pytest
 pytest-cov
 python-dotenv

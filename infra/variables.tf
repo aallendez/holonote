@@ -41,3 +41,7 @@ variable "ecr_nginx_repo" {
   type        = string
   description = "Docker image repository URI for frontend/nginx (e.g., ghcr.io/org/repo)"
 }
+
+# Monitoring (AWS Managed Prometheus + Grafana)
+# Note: Authentication is handled via AWS IAM Identity Center (AWS SSO)
+# No admin username/password needed

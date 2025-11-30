@@ -19,3 +19,9 @@
 
 ### Nov 29th, 2025
 - Spent the day debugging issues between resources (ECS, RDS and frontend in S3)
+
+### Nov 30th, 2025
+- Setting up grafana and prometheus monitoring with AWS native resources for initial prototyping. In the future will most likely move to my own setup to reduce prodution costs.
+    - This is a snapshot of my grafana dashboard (defined in file `deployment/holonote-backend.json`)
+
+        https://g-f2a9ab6939.grafana-workspace.eu-west-1.amazonaws.com/dashboard/snapshot/D8U0XbUENoxWNoGsukydO4SgzX1ZFhqW

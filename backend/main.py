@@ -7,6 +7,7 @@ from src.api.router import Router
 
 # Import auth module early to trigger Firebase initialization
 from src.core import auth  # noqa: F401
+from src.core.metrics import get_amp_writer
 from src.db.session import Base, engine
 
 # Configure logging
@@ -35,6 +36,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register routes automatically (before instrumentator)
+Router(app).load_routers()
+
+# Set up Prometheus metrics after routes are registered
+try:
+    from prometheus_fastapi_instrumentator import Instrumentator
+
+    instrumentator = Instrumentator()
+    instrumentator.instrument(app).expose(app)
+    logger.info("Prometheus metrics instrumentation enabled at /metrics")
+except ImportError as e:
+    logger.error(
+        f"prometheus-fastapi-instrumentator import failed: {str(e)}. "
+        f"Python path: {os.environ.get('PYTHONPATH', 'not set')}. "
+        "Metrics will not be exposed."
+    )
+except Exception as e:
+    logger.error(f"Failed to set up Prometheus metrics: {str(e)}", exc_info=True)
 
 
 # Create database tables and verify Firebase initialization
@@ -68,6 +88,9 @@ async def startup_event():
         # Don't raise - allow the app to start even if tables already exist
         # This prevents the app from crashing if tables are already created
 
-
-# Register routes automatically
-Router(app).load_routers()
+    # Initialize AMP writer (logs endpoint if configured)
+    amp_writer = get_amp_writer()
+    if amp_writer and amp_writer.enabled:
+        logger.info(
+            "AMP endpoint configured. Consider using AWS Distro for OpenTelemetry for remote write."
+        )

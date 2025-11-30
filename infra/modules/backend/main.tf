@@ -134,13 +134,16 @@ resource "aws_ecs_task_definition" "this" {
       name      = "backend"
       image     = "${var.ecr_backend_repo}:${var.prod_version}"
       essential = true
-      environment = [
+      environment = concat([
         { name = "DB_HOST", value = var.db_endpoint },
         { name = "DB_PORT", value = var.db_port },
         { name = "DB_NAME", value = var.db_name },
         { name = "DB_USER", value = var.db_username },
-        { name = "DB_PASSWORD", value = var.db_password }
-      ]
+        { name = "DB_PASSWORD", value = var.db_password },
+        { name = "AWS_REGION", value = data.aws_region.current.name }
+        ], var.amp_remote_write_endpoint != "" ? [
+        { name = "AMP_REMOTE_WRITE_ENDPOINT", value = var.amp_remote_write_endpoint }
+      ] : [])
       secrets = [
         {
           name      = "FIREBASE_SERVICE_ACCOUNT_KEY"

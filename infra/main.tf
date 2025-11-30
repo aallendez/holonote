@@ -35,6 +35,9 @@ module "backend" {
   db_name     = var.db_name
   db_username = module.db.username
   db_password = module.db.password
+
+  # AMP endpoint will be empty initially, updated after monitoring is created
+  amp_remote_write_endpoint = ""
 }
 
 # --- DATABASE (RDS PostgreSQL) ---
@@ -45,3 +48,16 @@ module "db" {
   db_username = local.db_credentials.username
   db_password = local.db_credentials.password
 }
+
+# --- MONITORING (AWS Managed Prometheus + Grafana) ---
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  workspace_name        = "holonote"
+  backend_task_role_arn = module.backend.task_role_arn
+}
+
+# Note: After initial deployment, update the backend task definition to include
+# the AMP endpoint. You can do this by:
+# 1. Getting the AMP endpoint: terraform output -json | jq -r '.amp_endpoint.value'
+# 2. Updating the backend module variable or manually updating the ECS task definition

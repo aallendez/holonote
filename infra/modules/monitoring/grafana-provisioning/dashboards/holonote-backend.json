@@ -1,0 +1,237 @@
+{
+    "title": "Holonote Backend",
+    "tags": ["holonote", "backend", "fastapi"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+  "version": 0,
+  "uid": "holonote-backend",
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "type": "timeseries",
+        "title": "HTTP Request Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"holonote-backend\"}[5m])",
+            "legendFormat": "{{method}} {{status}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {}
+        }
+      }
+      },
+      {
+        "id": 2,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "type": "timeseries",
+        "title": "HTTP Request Duration (p95, p99)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"holonote-backend\"}[5m]))",
+            "legendFormat": "p95",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=\"holonote-backend\"}[5m]))",
+            "legendFormat": "p99",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+        ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {}
+        }
+      }
+      },
+      {
+        "id": 3,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "type": "timeseries",
+        "title": "HTTP Status Codes",
+        "targets": [
+          {
+            "expr": "sum by (status) (rate(http_requests_total{job=\"holonote-backend\"}[5m]))",
+            "legendFormat": "{{status}}",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {}
+        }
+      }
+      },
+      {
+        "id": 4,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "type": "timeseries",
+        "title": "Request/Response Sizes",
+        "targets": [
+          {
+            "expr": "rate(http_request_size_bytes_sum{job=\"holonote-backend\"}[5m])",
+            "legendFormat": "Request size",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          },
+          {
+            "expr": "rate(http_response_size_bytes_sum{job=\"holonote-backend\"}[5m])",
+            "legendFormat": "Response size",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {}
+        }
+      }
+      },
+      {
+        "id": 5,
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+        "type": "stat",
+        "title": "Total Requests",
+        "targets": [
+          {
+            "expr": "sum(increase(http_requests_total{job=\"holonote-backend\"}[1h]))",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        }
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 16},
+        "type": "stat",
+        "title": "Error Rate",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{job=\"holonote-backend\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"holonote-backend\"}[5m])) * 100",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value",
+          "unit": "percent"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {}
+        }
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 16},
+        "type": "stat",
+        "title": "Avg Response Time",
+        "targets": [
+          {
+            "expr": "rate(http_request_duration_seconds_sum{job=\"holonote-backend\"}[5m]) / rate(http_request_duration_seconds_count{job=\"holonote-backend\"}[5m])",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value",
+          "unit": "s"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {}
+        }
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 16},
+        "type": "stat",
+        "title": "Current RPS",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{job=\"holonote-backend\"}[1m]))",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value",
+          "unit": "reqps"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {}
+        }
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "weekStart": ""
+}

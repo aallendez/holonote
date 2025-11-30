@@ -75,3 +75,53 @@ src/services/user_service.py      27      4    85%   72-75
 ------------------------------------------------------------
 TOTAL                            580     59    90%
 ================================== 89 passed, 34 warnings in 1.25s ===================================
+
+
+BACKEND - INTEGRATION
+python -m pytest backend/tests/integration
+=========================================== test session starts ===========================================
+platform darwin -- Python 3.11.14, pytest-9.0.1, pluggy-1.6.0
+rootdir: /Users/juanalonso-allende/Desktop/Arkanis/holonote
+plugins: anyio-4.11.0, cov-7.0.0
+collected 2 items
+
+backend/tests/integration/test_backend_integration.py ..                                            [100%]
+
+============================================ warnings summary =============================================
+backend/main.py:60
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/main.py:60: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("startup")
+
+backend/.venv/lib/python3.11/site-packages/fastapi/applications.py:4575
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/.venv/lib/python3.11/site-packages/fastapi/applications.py:4575: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)
+
+backend/tests/integration/test_backend_integration.py:72
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/tests/integration/test_backend_integration.py:72: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.integration
+
+backend/tests/integration/test_backend_integration.py::test_holo_config_and_daily_flow
+backend/tests/integration/test_backend_integration.py::test_holo_config_and_daily_flow
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/src/db/holos.py:104: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    return HoloDaily.from_orm(db_holo_daily)
+
+backend/tests/integration/test_backend_integration.py::test_holo_config_and_daily_flow
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/src/db/holos.py:72: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    return HoloDaily.from_orm(result)
+
+backend/tests/integration/test_backend_integration.py::test_holo_config_and_daily_flow
+  /Users/juanalonso-allende/Desktop/Arkanis/holonote/backend/src/db/holos.py:85: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    return HoloDaily.from_orm(result)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================================== 2 passed, 7 warnings in 0.44s ======================================

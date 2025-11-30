@@ -94,3 +94,6 @@ logs-aws-backend-recent:
 logs-aws-nginx-recent:
 	@echo "Viewing recent nginx logs (last 1 hour)..."
 	@aws logs tail /ecs/holonote/nginx --since 1h
+
+grafana-url:
+	@cd infra && terraform output grafana_endpoint
