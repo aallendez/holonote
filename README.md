@@ -59,7 +59,7 @@ Integration (Backend)
 make integration
 ```
 
-You can access a report of frontend and backend unit test coverage as well as integration tests by checking the `test_results.txt` file at repo root.
+You can access a report of frontend and backend unit test coverage as well as integration tests by checking the `documentation/test_results.txt` file.
 
 ## Production
 Holonote is currently deployed in AWS. For information about deployment and resources used, please visit `infra/` directory in this repo.
