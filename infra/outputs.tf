@@ -58,3 +58,8 @@ output "monitoring_setup_instructions" {
        - Or create custom dashboards for your application
   EOT
 }
+
+output "github_actions_role_arn" {
+  value       = module.github_actions.role_arn
+  description = "ARN of the IAM role for GitHub Actions OIDC. Add this as AWS_ROLE_ARN secret in GitHub."
+}

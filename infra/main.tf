@@ -57,6 +57,15 @@ module "monitoring" {
   backend_task_role_arn = module.backend.task_role_arn
 }
 
+# --- GITHUB ACTIONS OIDC ROLE ---
+module "github_actions" {
+  source = "./modules/github-actions"
+
+  github_repo          = var.github_repo
+  frontend_bucket_name = var.frontend_bucket_name
+  create_oidc_provider = var.create_github_oidc_provider
+}
+
 # Note: After initial deployment, update the backend task definition to include
 # the AMP endpoint. You can do this by:
 # 1. Getting the AMP endpoint: terraform output -json | jq -r '.amp_endpoint.value'

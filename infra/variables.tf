@@ -45,3 +45,15 @@ variable "ecr_nginx_repo" {
 # Monitoring (AWS Managed Prometheus + Grafana)
 # Note: Authentication is handled via AWS IAM Identity Center (AWS SSO)
 # No admin username/password needed
+
+# GitHub Actions OIDC
+variable "github_repo" {
+  type        = string
+  description = "GitHub repository in format 'owner/repo' (e.g., 'juanalonso-allende/holonote')"
+}
+
+variable "create_github_oidc_provider" {
+  type        = bool
+  default     = false
+  description = "Whether to create the GitHub Actions OIDC provider (set to false if it already exists in your AWS account)"
+}

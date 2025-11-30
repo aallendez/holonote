@@ -16,3 +16,7 @@ ecr_nginx_repo   = "ghcr.io/aallendez/holonote-frontend"
 
 # Firebase service account key is stored in AWS Secrets Manager
 # Secret name: holonote-firebase-service-account-key
+
+# --- GitHub Actions OIDC ---
+github_repo                 = "juanalonso-allende/holonote" # Update with your actual GitHub repo
+create_github_oidc_provider = true                          # Set to false if OIDC provider already exists in your AWS account
