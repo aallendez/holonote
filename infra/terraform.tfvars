@@ -20,4 +20,4 @@ ecr_nginx_repo   = "ghcr.io/aallendez/holonote-frontend"
 # --- GitHub Actions OIDC ---
 github_repo                 = "aallendez/holonote"
 create_github_oidc_provider = true
-# debuggin
+# debugging
