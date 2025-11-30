@@ -35,19 +35,6 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Deploying version: $VERSION"
 
-      # --- Checkout the EXACT version tag ---
-      - name: Checkout release tag
-        run: |
-          git fetch --all --tags
-          git checkout v${{ steps.version.outputs.version }}
-
-      # --- Debug OIDC Token Info ---
-      - name: Debug OIDC Token Info
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Expected sub format: repo:${{ github.repository }}:ref:${{ github.ref }}"
-
       # --- Configure AWS Credentials (OIDC) ---
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -55,6 +42,12 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: eu-west-1
           audience: sts.amazonaws.com
+
+      # --- Checkout the EXACT version tag for frontend build ---
+      - name: Checkout release tag
+        run: |
+          git fetch --all --tags
+          git checkout v${{ steps.version.outputs.version }}
 
       # --- Build Frontend (React) ---
       - name: Setup Node
@@ -76,6 +69,13 @@ jobs:
       - name: Upload frontend to S3
         run: |
           aws s3 sync frontend/build/client/ s3://holonote-frontend-prod --delete
+
+      # --- Checkout main branch for latest infrastructure code ---
+      - name: Checkout main for infrastructure
+        run: |
+          git checkout main
+          # Ensure infra directory has latest code
+          git checkout main -- infra/
 
       # --- TERRAFORM DEPLOY ---
       - name: Setup Terraform
