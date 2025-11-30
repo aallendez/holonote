@@ -41,12 +41,20 @@ jobs:
           git fetch --all --tags
           git checkout v${{ steps.version.outputs.version }}
 
+      # --- Debug OIDC Token Info ---
+      - name: Debug OIDC Token Info
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Expected sub format: repo:${{ github.repository }}:ref:${{ github.ref }}"
+
       # --- Configure AWS Credentials (OIDC) ---
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: eu-west-1
+          audience: sts.amazonaws.com
 
       # --- Build Frontend (React) ---
       - name: Setup Node
