@@ -87,5 +87,4 @@ jobs:
 
       - name: Terraform Apply
         working-directory: infra
-        run: terraform apply -auto-approve \
-          -var="db_secret_arn=${{ secrets.DB_SECRET_ARN }}"
+        run: terraform apply -auto-approve
