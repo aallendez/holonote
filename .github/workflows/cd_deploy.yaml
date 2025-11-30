@@ -43,26 +43,6 @@ jobs:
           aws-region: eu-west-1
           audience: sts.amazonaws.com
 
-      # --- Get ALB URL from Terraform (for API base URL) ---
-      # Need to do this before checking out tag, using current infrastructure code
-      - name: Setup Terraform (for ALB URL)
-        uses: hashicorp/setup-terraform@v2
-
-      - name: Get ALB URL from Terraform
-        id: alb_url
-        working-directory: infra
-        run: |
-          terraform init
-          ALB_DNS=$(terraform output -raw alb_dns 2>/dev/null || echo "")
-          if [ -n "$ALB_DNS" ]; then
-            ALB_URL="http://${ALB_DNS}"
-            echo "alb_url=${ALB_URL}" >> $GITHUB_OUTPUT
-            echo "Backend URL: ${ALB_URL}"
-          else
-            echo "Warning: Could not get ALB URL, using default"
-            echo "alb_url=http://localhost:5001" >> $GITHUB_OUTPUT
-          fi
-
       # --- Checkout the EXACT version tag for frontend build ---
       - name: Checkout release tag
         run: |
@@ -89,7 +69,7 @@ jobs:
           VITE_FIREBASE_MSG_SENDER_ID: ${{ secrets.VITE_FIREBASE_MSG_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
-          VITE_API_BASE_URL: ${{ steps.alb_url.outputs.alb_url }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: |
           cd frontend
           npm run build
