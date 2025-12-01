@@ -4,6 +4,12 @@
 
 Holonote has evolved from an early prototype into a more stable, production-ready system. I focused on correctness, automation, deployment reliability, and observability.
 
+### Fixed Issues from Assignment 1
+
+I fixed the following issues from Assignment 1:
+- Added an .env.example file to root folder and frontend/ folder.
+- I added package-lock.json to the repo to avoid regeneration.
+
 ## Integration Tests
 
 End-to-end integration tests now validate system behavior using an isolated environment, in-memory SQLite, and a mock authenticated user. These tests ensure workflows function correctly across components.
