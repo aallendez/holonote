@@ -29,6 +29,11 @@ Build your application
 make dev
 ```
 
+Activate pre-commit hooks
+```bash
+pre-commit install
+```
+
 
 ### Stop & Restart
 To stop or restart this app, run:

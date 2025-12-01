@@ -12,3 +12,4 @@ pytest-cov
 python-dotenv
 black
 bandit
+pre-commit
