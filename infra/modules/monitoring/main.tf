@@ -2,6 +2,14 @@
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+# Random ID for workspace name uniqueness
+resource "random_id" "workspace_suffix" {
+  byte_length = 2
+  keepers = {
+    workspace_name = var.workspace_name
+  }
+}
+
 # --- Amazon Managed Service for Prometheus (AMP) ---
 resource "aws_prometheus_workspace" "this" {
   alias = "${var.workspace_name}-amp"
@@ -42,7 +50,7 @@ resource "aws_iam_role_policy" "amp_write_policy" {
 
 # --- Amazon Managed Grafana ---
 resource "aws_grafana_workspace" "this" {
-  name                     = "${var.workspace_name}-grafana"
+  name                     = "${var.workspace_name}-grafana-${substr(random_id.workspace_suffix.hex, 0, 4)}"
   account_access_type      = "CURRENT_ACCOUNT"
   authentication_providers = ["AWS_SSO"]
   permission_type          = "SERVICE_MANAGED"
@@ -104,6 +112,35 @@ resource "aws_iam_role_policy_attachment" "grafana_cloudwatch" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess"
 }
 
-# --- Grafana API Key for programmatic access (optional, for automation) ---
-# Note: API keys are created via Grafana UI or API, not Terraform
-# This is just a placeholder for documentation
+# Local values for Grafana setup
+locals {
+  dashboard_file_path = "${path.module}/grafana-provisioning/dashboards/holonote-backend.json"
+  admin_emails_json   = jsonencode(var.admin_emails)
+}
+
+# --- Grafana Setup (Dashboard Import & User Assignment) ---
+resource "null_resource" "setup_grafana" {
+  depends_on = [
+    aws_grafana_workspace.this,
+    aws_iam_role_policy.grafana_amp_read_policy
+  ]
+
+  triggers = {
+    workspace_id       = aws_grafana_workspace.this.id
+    workspace_endpoint = aws_grafana_workspace.this.endpoint
+    dashboard_file     = filemd5(local.dashboard_file_path)
+    admin_emails       = local.admin_emails_json
+    region             = data.aws_region.current.name
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      bash ${path.module}/scripts/setup-grafana.sh \
+        "${aws_grafana_workspace.this.id}" \
+        "${aws_grafana_workspace.this.endpoint}" \
+        '${local.admin_emails_json}' \
+        "${local.dashboard_file_path}" \
+        "${data.aws_region.current.name}"
+    EOT
+  }
+}
