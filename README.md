@@ -69,32 +69,11 @@ make integration
 You can access a report of frontend and backend unit test coverage as well as integration tests by checking the `documentation/test_results.txt` file.
 
 ## Production
-Holonote is currently deployed in AWS. For information about deployment and resources used, please visit `infra/` directory in this repo.
 
-- You can **access holonote** through this link http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com
-    - ⚠️ Warning: make sure the protocol is http (not https). Otherwise the page will not load.
-
-⚠️ Warning: due to costs grafana is not currently active. If you want to see grafana logs, please execute:
+If you want to deploy holonote using your own AWS account, you can do so by running the following command:
 ```bash
-terraform apply
+make deploy
 ```
-This will produce the outputs you see below.
+This will deploy the application to your own AWS account using Terraform.
 
-### Terraform outputs:
-```bash
-alb_dns = "holonote-alb-1922459695.eu-west-1.elb.amazonaws.com"
-
-amp_workspace_id = "ws-95928c16-b299-49c9-8d4a-445be879d34f"
-
-db_endpoint = "holonotedb.cpag0wewiohh.eu-west-1.rds.amazonaws.com"
-
-ecs_cluster_id = "arn:aws:ecs:eu-west-1:774305601984:cluster/holonote-cluster"
-
-frontend_url = "http://holonote-frontend-prod.s3-website-eu-west-1.amazonaws.com"
-
-github_actions_role_arn = "arn:aws:iam::774305601984:role/holonote-ci-deploy-role"
-
-grafana_endpoint = "g-f2a9ab6939.grafana-workspace.eu-west-1.amazonaws.com"
-
-grafana_workspace_id = "g-f2a9ab6939"
-```
+You can access the application through the URL provided by the output of the command.

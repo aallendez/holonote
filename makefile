@@ -97,3 +97,6 @@ logs-aws-nginx-recent:
 
 grafana-url:
 	@cd infra && terraform output grafana_endpoint
+
+deploy:
+	cd infra && terraform apply
